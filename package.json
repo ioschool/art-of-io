@@ -1,0 +1,60 @@
+{
+  "name": "js101",
+  "version": "0.0.0",
+  "description": "ioschool's javascript 101 curiculuum",
+  "main": "index.js",
+  "browser": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-html": "node .",
+    "build-js": "browserify . -o build/bundle.js",
+    "build-css": "myth src/index.css build/bundle.css",
+    "build-assets": "cp -r assets/* build",
+    "build": "mkdir -p build && rm -rf build/* && npm run build-html && npm run build-js && npm run build-css && npm run build-assets",
+    "start": "npm run build && node server",
+    "deploy": "npm run build && bin/deploy",
+    "watch-html": "node . -w",
+    "watch-js": "watchify . -o build/bundle.js",
+    "watch-css": "myth -w src/index.css build/bundle.css",
+    "watch-assets": "cp -r assets/* build",
+    "watch": "mkdir -p build && rm -rf build/* && (npm run watch-html & npm run watch-js & npm run watch-css & npm run watch-assets)",
+    "develop": "(npm run watch & node server)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioschool/js101"
+  },
+  "author": "ioschool",
+  "license": "CC-BY-SA",
+  "bugs": {
+    "url": "https://github.com/ioschool/js101/issues"
+  },
+  "homepage": "https://github.com/ioschool/js101",
+  "dependencies": {
+    "bespoke": "^1.0.0",
+    "bespoke-backdrop": "^1.0.0",
+    "bespoke-classes": "^1.0.0",
+    "bespoke-hash": "^1.0.0",
+    "bespoke-keys": "^1.0.0",
+    "bespoke-progress": "^1.0.0",
+    "bespoke-scale": "^1.0.1",
+    "bespoke-touch": "^1.0.0",
+    "browserify": "^6.1.0",
+    "load-metalsmith-plugins": "^0.1.0",
+    "metalsmith": "^1.0.1",
+    "metalsmith-collections": "^0.6.0",
+    "metalsmith-markdown": "^0.2.1",
+    "metalsmith-templates": "^0.6.0",
+    "metalsmith-watch": "^0.1.1",
+    "myth": "^1.2.1",
+    "normalize.css": "^3.0.2",
+    "query-string": "^1.0.0",
+    "swig": "^1.4.2",
+    "watchify": "^2.0.0"
+  },
+  "devDependencies": {
+    "connect": "^3.3.0",
+    "ecstatic": "^0.5.5",
+    "gh-pages": "^0.2.0"
+  }
+}

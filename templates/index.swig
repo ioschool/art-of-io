@@ -23,7 +23,9 @@
   <body>
 
     <main>
-      {% include "./slides.swig" %}
+      {% autoescape false %}
+      {{ contents }}
+      {% endautoescape %}
     </main>
 
     {% for href in scripts %}

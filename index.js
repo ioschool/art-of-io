@@ -8,16 +8,7 @@ if (process.argv[2] === '-w') {
   m.use(plugins.watch());
 }
 
-m.use(plugins.collections({
-  guides: {
-    pattern: "guides/**/*.md",
-  },
-  slides: {
-    pattern: "slides/**/*.md",
-    sortBy: "order",
-  },
-}))
-.use(plugins.markdown())
+m
 .use(plugins.templates('swig'))
 .build(function (err, files) {
   if (err) { throw err; }

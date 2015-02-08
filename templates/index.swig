@@ -21,6 +21,9 @@
 
   </head>
   <body>
+    <a class='fork-me' href='http://github.com/ioschool/art-of-io'>
+      Fork me on GitHub
+    </a>
 
     <main>
       {% autoescape false %}

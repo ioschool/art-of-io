@@ -1,7 +1,7 @@
 {
   "name": "art-of-io",
   "version": "0.0.0",
-  "description": "a magical introduction to input and output",
+  "description": "a magical introduction to input and output signals",
   "main": "index.js",
   "browser": "src/index.js",
   "scripts": {

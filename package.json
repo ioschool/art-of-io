@@ -1,7 +1,7 @@
 {
-  "name": "js101",
+  "name": "art-of-io",
   "version": "0.0.0",
-  "description": "ioschool's javascript 101 curiculuum",
+  "description": "a magical introduction to input and output",
   "main": "index.js",
   "browser": "src/index.js",
   "scripts": {
@@ -22,14 +22,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ioschool/js101"
+    "url": "https://github.com/ioschool/art-of-io"
   },
   "author": "ioschool",
   "license": "CC-BY-SA",
   "bugs": {
-    "url": "https://github.com/ioschool/js101/issues"
+    "url": "https://github.com/ioschool/art-of-io/issues"
   },
-  "homepage": "https://github.com/ioschool/js101",
+  "homepage": "https://github.com/ioschool/art-of-io",
   "dependencies": {
     "bespoke": "^1.0.0",
     "bespoke-backdrop": "^1.0.0",

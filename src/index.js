@@ -1,5 +1,6 @@
 var bespoke = require('bespoke');
 
+require('highlight.js').initHighlightingOnLoad();
 
 module.exports = bespoke.from('.presentation', [
   require('bespoke-classes')(),

@@ -31,6 +31,7 @@ scripts:
     <p>In this course, we will learn the core forms of Javascript I/O magic:</p>
     <ul>
       <li>functions</li>
+      <li>closures</li>
       <li>modules</li>
       <li>callbacks</li>
       <li>events</li>
@@ -42,19 +43,21 @@ scripts:
   <section>
     <h1>Hello World!</h1>
     <p>To say hello, write a file <code>hello.js</code> with the following:</p>
-    <pre><code class="javascript">console.log('hello world!');</code></pre>
+    <pre><code class="javascript">// hello.js
+
+console.log('hello world!');</code></pre>
     <p>Run the file with <code>node hello.js</code>.</p>
   </section>
 
   <section>
     <h1>Function Magic</h1>
-    <p>Functions accept input and return output.</p>
+    <p>Functions accept input, return output, and maybe perform effects.</p>
     <p>Functions allow us to think at a higher level by "abstracting over functionality".</p>
-    <pre><code class="javascript">
-// in this example, we create a function
-// that takes in a single number argument `x`
-// and returns `x + 10`
-
+    <pre><code class="javascript">// add-ten.js
+    
+// `addTen` is a function
+// that accepts a number `x`
+// and returns a number `x + 10`.
 function addTen (x) {
   return x + 10;
 }
@@ -67,6 +70,7 @@ addTen(100); // 110</code></pre>
     <p>Great, now we let's abstract our hello into a function.</p>
     <p>Let's write a new file <code>functional-hello.js</code>:</p>
     <pre><code class="javascript">// functional-hello.js
+
 function hello () {
   console.log('hello world!');
 }
@@ -76,27 +80,28 @@ hello();</code></pre>
 
   <section>
     <h1>Closure Magic</h1>
-    <p>Closures are a useful pattern of functions that "close over some variables".</p>
-    <pre><code class="javascript">
-// in this example, we create a function
-// that takes in a single number argument `n`
-// and returns a function that takes in a
-// single number argument `x` and returns `x + n`. 
+    <p>Closures are a useful pattern of functions that "close over variables".</p>
+    <pre><code class="javascript">// add-number.js
 
-var addN = function (n) {
+// `addNumber` is a function
+// that accepts a number `n`
+// and returns a function that
+//  accepts a number `x`
+//  and returns a number `x + n`. 
+var addNumber = function (n) {
   return function (x) {
     return x + n;
   };
 };
 
-var addTen = addN(10);
+var addTen = addNumber(10);
 
 addTen(100); // 110</code></pre>
   </section>
 
   <section>
     <h1>Say</h1>
-    <p>Sweet, what if we wanted to speak through closures?</p>
+    <p>Sweet, what if we wanted to speak with closures?</p>
     <p>Time for <code>hello-bye.js</code>!</p>
     <pre><code class="javascript">// hello-bye.js
 function say (text) {
@@ -170,13 +175,19 @@ bye();</code></pre>
   </section>
 
   <section>
-    <h1>Async Magic</h1>
+    <h1>Async Magic (1/3)</h1>
     <p>
-      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially.
+      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially, the next task doesn't start until the current task is done and information is passed back.
     </p>
+  </section>
+  <section>
+    <h1>Async Magic (2/3)</h1>
     <p>
-      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously.
+      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, tasks always start and tasks know what tasks to start and pass information to after they are done.
     </p>
+  </section>
+  <section>
+    <h1>Async Magic (3/3)</h1>
     <blockquote>
       For example, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
     </blockquote>
@@ -185,11 +196,11 @@ bye();</code></pre>
   <section>
     <h1>Callback Magic</h1>
     <p>
-      Callbacks are functions that are executed asynchronously, or at a later time.
+      Callbacks are functions that are executed "async", or at a later time.
     </p>
-    <p>
-      At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your food is ready.
-    </p>
+    <blockquote>
+      At many restaurants you get a number to put on your table while you wait for your food. These are similar to callbacks. They tell the server what to do after your food is ready.
+    </blockquote>
   </section>
 
   <section>
@@ -201,39 +212,47 @@ var bye = require('./bye');
 hello();
 bye();</code></pre>
     <pre><code class="javascript">// hello-bye-async.js
+var timers = require('timers');
 var hello = require('./hello');
 var bye = require('./bye');
 
-process.nextTick(hello);
+// say 'hello' on next event loop
+timers.setImmediate(hello);
+
+// say 'bye'
 bye();
 </code></pre>
   </section>
 
   <section>
     <h1>Hello and Delayed Bye</h1>
-    <p>Who says 'hello' and then immediately says 'bye'. What if we wanted to delay our 'bye' for a bit?</p>
+    <p>What if we wanted to say 'hello' and delay our 'bye' for a bit?</p>
     <pre><code class="javascript">// hello-delayed-bye.js
 //-----------------------------------------------------
+var timers = require('timers');
 var hello = require('./hello');
 var bye = require('./bye');
 
-// say 'hello'
-hello();
+// say 'hello' on next event loop;
+timers.setImmediate(hello);
 
-// set one-shot timeout (in milliseconds) to say 'bye'
-process.setTimeout(bye, 5 * 1000);</code></pre>
+// delay time (in milliseconds)
+// before saying 'bye'
+timers.setTimeout(bye, 5 * 1000);</code></pre>
     <p>Does it work? <code>node hello-delayed-bye.js</code></p>
   </section>
 
   <section>
     <h1>Repeated Hello</h1>
-    <p>Actually, it's sad to say 'bye'. Let's just keep saying 'hello'!</p>
+    <p>Actually, it's sad to say 'bye'. Let's keep saying 'hello'!</p>
     <pre><code class="javascript">// hello-on-repeat.js
 //-------------------------------------------------------
+var timers = require('timers');
 var hello = require('./hello');
 
-// set repeating interval (in milliseconds) to say hello
-setInterval(hello, 1 * 1000);</code></pre>
+// repeat interval (in milliseconds)
+// to keep saying 'hello'
+timers.setInterval(hello, 1 * 1000);</code></pre>
     <p>Hello? <code>node hello-on-repeat.js</code></p>
   </section>
 
@@ -242,110 +261,144 @@ setInterval(hello, 1 * 1000);</code></pre>
     <p>Saying 'hello' is boring now, what if we could specify what to say when we run our code?</p>
     <pre><code class="javascript">// say-arg.js
 //-------------------------------------------------------
+var timers = require('timers');
 var say = require('./say');
 
-// get text from command-line arguments
-var text = process.argv[1];
+// get speech from command-line arguments
+var speech = process.argv[1];
 
-// set repeating interval (in milliseconds) to say text
-setInterval(say(text), 1 * 1000);</code></pre>
+// set repeating interval (in milliseconds) to say speech
+timers.setInterval(say(speech), 1 * 1000);</code></pre>
     <p>Meow. <code>node say-arg.js 'rawrrrrr! :3'</code></p>
   </section>
 
   <section>
     <h1>Writing a file</h1>
     <p>So now we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
-    <pre><code class="javascript">// write-journal.js
-//-------------------------------------------------
+    <pre><code class="javascript">// append-journal-txt.js
+//-------------------------------------------------------
 var fs = require('fs');
-// get text from command-line arguments
-var text = process.argv[1];
-// append entry to journal
-fs.appendFileSync("journal.txt", text);</code></pre>
-    <p>Write with <code>node write-journal.js 'today i learned i/o'</code> and read with <code>cat journal.txt</code></p>
+
+function appendJournal (entry, callback) {
+  // append entry to journal.txt file and pass callback
+  fs.appendFile("./journal.txt", entry, callback);
+}
+
+function defaultErrorHandler (err) {
+  if (err) { throw err; } // nothing better to do
+}
+
+// get entry from command-line arguments
+var entry = process.argv[1];
+
+// append entry to journal, handling any errors
+appendJournal(entry, defaultErrorHandler);</code></pre>
+    <p>Write with <code>node append-journal-txt.js 'today i learned i/o'</code> and read with <code>cat journal.txt</code></p>
   </section>
 
   <section>
     <h1>Writing a directory</h1>
     <p>Having a single journal file for all entries is no good, let's name our entries and store them as separate files in a directory.</p>
-    <pre><code class="javascript">// write-journals.js
-//-------------------------------------------------
+    <pre><code class="javascript">// write-journal.js
+//--------------------------------------------------------
 var fs = require('fs');
+var defaultErrorHandler = require('./default-error-handler')
+
+function appendJournal (name, entry, callback) {
+  // append entry to journal.txt file and pass callback
+  fs.appendFile("./journal/" + name, entry, callback);
+}
+
 // get name from command-line arguments
 var name = process.argv[1];
 // get text from command-line arguments
-var text = process.argv[2];
-// write entry to journal
-fs.writeFileSync("journal/" + name, entry);</code></pre>
-    <p>Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journals.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code></p>
+var entry = process.argv[2];
+
+// append entry to journal, handling any errors
+appendJournal(name, entry, defaultErrorHandler);</code></pre>
+    <p>Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journal.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code></p>
   </section>
 
   <section>
     <h1>Listing our journal entries</h1>
     <p>Now that we have a directory of our journal entries, let's list their names.</p>
-    <pre><code class="javascript">// list-journals.js
-//-------------------------------------------------
+    <pre><code class="javascript">// list-journal.js
+//---------------------------------------------------------------
 var fs = require('fs');
+var defaultErrorHandler = require('./default-error-handler');
 
-// get entry names from journal
-var entryNames = fs.readdirSync("journal");
+function getEntryNames (callback) {
+  // get entry names from journal directory and pass callback
+  fs.readdir("./journal", callback);
+}
 
-// for each entry name, log it to console
-entryNames.forEach(console.log);</pre></code>
-    <p>List your journal entries with <code>node list-journals.js</code>.</p>
-  </section>
+getEntryNames(function (err, entryNames));
+  if (err) { return defaultErrorHandler(err); }
 
-  <section>
-    <h1>Count length of journals</h1>
-    <p>Sweet, we have the names of the journal entries, now let's count how long the entries are (by number of characters).</p>
-    <pre><code class="javascript">// count-journals.js
-//-------------------------------------------------
-var fs = require('fs');
-
-// get entry names from journal
-var entryNames = fs.readdirSync("journal");
-
-// for each entry name,
-entryNames.forEach(function (entryName) {
-  // read entry from journal
-  var entry = fs.readFileSync(entryName, { encoding: 'utf8' });
-  // print name and length of entry
-  console.log(entryName, ":", entry.length);
+  // for each entry name, log it to console
+  entryNames.forEach(console.log);
 });</pre></code>
-    <p>Count your journal entries with <code>node count-journals.js</code>.</p>
+    <p>List your journal entries with <code>node list-journal.js</code>.</p>
   </section>
-
-<!--
-    <p>
-      Everything we've done so far is "synchronous": tasks are handled sequentially, where the interpreter "blocks" any subsequent line until the previous line is finished.
-    <pre><code class="javascript">var contents = fs.readFileSync("my-file.txt");
-console.log(contents.toString());</code></pre>
-    <p>
-      The power of Javascript I/O lies in being "asynchronous": tasks are handled simultaneously, where the interpreter is "non-blocking" and instead each async task accepts a "callback" function to run when the previous task is done.
-    </p>
--->
 
   <section>
     <h1>Advanced Callback Magic</h1>
     <p>
       The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function finishing.
     </p>
-    <pre><code class="javascript">function onFileRead (err, contents) {
-  if (err) { throw err; }
-  var number = parseInt(contents);
-  number++;
-  fs.writeFile("number.txt", number.toString(), onFileWrite);
-}
-
-function onFileWrite (err) {
-  if (err) { throw err; }
-  console.log("done!");
-}
-
-fs.readFile("number.txt", onFileRead);</code></pre>
   </section>
 
-<!--
+  <section>
+    <h1>Count length of journals</h1>
+    <p>Sweet, we have the names of the journal entries, now let's count how long the entries are (by number of characters).</p>
+    <pre><code class="javascript">// count-journal.js
+//-----------------------------------------------------------------------
+var fs = require('fs');
+var defaultErrorHandler = require('./default-error-handler');
+
+var getEntryNames = require('./get-entry-names');
+
+function countEntry (entryName, callback) {
+  fs.readFile(entryName, function (err, entry) {
+    if (err) { return callback(err); } // pass error to callback
+    callback(null, entry.toString().length);
+  });
+}
+
+// get entry names
+getEntryNames(function (err, entryNames));
+  if (err) { return defaultErrorHandler(err); }
+
+  // for each entry name,
+  entryNames.forEach(function (entryName) {
+
+    // count length of entry from journal
+    countEntry(entryName, function (err, count) {
+      if (err) { return defaultErrorHandler; }
+
+      // print name and length of entry
+      console.log(entryName, ":", count);
+    });
+});</pre></code>
+    <p>Count your journal entries with <code>node count-journal.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>
+      <a href="http://callbackhell.com/">Callback Hell</a>
+    </h1>
+    <p>
+      Asynchronous javascript, or javascript that uses callbacks, is hard to get right intuitively. A lot of code ends up looking messy, with nested callbacks indenting on forever. If you notice this, <a href="http://callbackhell.com">here's a guide to help</a>. :)
+    </p>
+  </section>
+
+  <section>
+    <h1>IN PROGRESS</h1>
+    <h2>
+      the rest of the slides are a work in progress. go on if you dare.
+    </h2>
+  </section>
+
   <section>
     <h1>Speak Art</h1>
     <p>Making sense is overrated, let's speak art.</p>
@@ -478,6 +531,7 @@ setInterval(speak, 1 * 1000); // time in milliseconds</code></pre>
     <pre class="pre-scrollable"><code class="javascript">// write-random-journal.js
 //------------------------------------------------------
 var fs = require('fs');
+var defaultErrorHandler = require('./default-error-handler');
 var randomWord = require('random-word');
 var repeatFunction = require('repeat-function');
 
@@ -487,7 +541,7 @@ function randomSentence () {
 }
 var sentences = repeatFunction(100, randomSentence);
 
-fs.writeFileSync("journal.txt", sentences.join(" "));</code></pre>
+fs.writeFile("journal.txt", sentences.join(" "), defaultErrorHandler);</code></pre>
     <p>Run <code>node write-random-journal.js</code> to write, run <code>cat journal.txt</code> to read.</p>
   </section>
 
@@ -564,7 +618,6 @@ journalNames.forEach(function (name) {
 });
 </code></pre>
   </section>
--->
 
 </article>
 <!--

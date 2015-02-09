@@ -193,13 +193,13 @@ bye();</code></pre>
   <section>
     <h1>Async Magic (1/3)</h1>
     <p>
-      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially, the next task doesn't start until the current task is done and information is passed back.
+      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially, the interpreter waits to execute the next task until the current task (like reading from the filesystem) is done.
     </p>
   </section>
   <section>
     <h1>Async Magic (2/3)</h1>
     <p>
-      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, tasks always start and tasks know what tasks to start and pass information to after they are done.
+      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, the interpreter never waits and queues up tasks to respond when each current task is done.
     </p>
   </section>
   <section>
@@ -286,6 +286,24 @@ var speech = process.argv[1];
 // set repeating interval (in milliseconds) to say speech
 timers.setInterval(say(speech), 1 * 1000);</code></pre>
     <p>Meow. <code>node say-arg.js 'rawrrrrr! :3'</code></p>
+  </section>
+
+  <section>
+    <h1>Callback Convention</h1>
+    <p>
+      Most callbacks in I/O Javascript have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can alias to whatever you like when defining your callback functions).
+    </p>
+    <pre><code class="javascript">// read-me.js
+//-------------------------------------------------------
+var fs = require('fs');
+
+fs.readFile(__filename, function (err, result) {
+  // if error, handle error
+  if (err) { throw err; }
+
+  // otherwise, do something with result
+  console.log(result);
+});</code></pre>
   </section>
 
   <section>

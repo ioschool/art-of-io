@@ -27,17 +27,525 @@ scripts:
   </section>
 
   <section>
-    <h1>hello world!</h1>
-    <pre><code class="javascript">console.log('hello world!');</code></pre>
+    <h1>Course Overview</h1>
+    <p>In this course, we will learn the core forms of Javascript I/O magic:</p>
+    <ul>
+      <li>functions</li>
+      <li>modules</li>
+      <li>callbacks</li>
+      <li>events</li>
+      <li>streams</li>
+    </ul>
+    <p>By becoming proficient with these core forms of magic, you'll be able to alter space and time... <em>cyber</em> space and time.</p>
   </section>
+
+  <section>
+    <h1>Hello World!</h1>
+    <p>To say hello, write a file <code>hello.js</code> with the following:</p>
+    <pre><code class="javascript">console.log('hello world!');</code></pre>
+    <p>Run the file with <code>node hello.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Function Magic</h1>
+    <p>Functions accept input and return output.</p>
+    <p>Functions allow us to think at a higher level by "abstracting over functionality".</p>
+    <pre><code class="javascript">
+// in this example, we create a function
+// that takes in a single number argument `x`
+// and returns `x + 10`
+
+function addTen (x) {
+  return x + 10;
+}
+
+addTen(100); // 110</code></pre>
+  </section>
+
+  <section>
+    <h1>Functional Hello</h1>
+    <p>Great, now we let's abstract our hello into a function.</p>
+    <p>Let's write a new file <code>functional-hello.js</code>:</p>
+    <pre><code class="javascript">// functional-hello.js
+function hello () {
+  console.log('hello world!');
+}
+
+hello();</code></pre>
+  </section>
+
+  <section>
+    <h1>Closure Magic</h1>
+    <p>Closures are a useful pattern of functions that "close over some variables".</p>
+    <pre><code class="javascript">
+// in this example, we create a function
+// that takes in a single number argument `n`
+// and returns a function that takes in a
+// single number argument `x` and returns `x + n`. 
+
+var addN = function (n) {
+  return function (x) {
+    return x + n;
+  };
+};
+
+var addTen = addN(10);
+
+addTen(100); // 110</code></pre>
+  </section>
+
+  <section>
+    <h1>Say</h1>
+    <p>Sweet, what if we wanted to speak through closures?</p>
+    <p>Time for <code>hello-bye.js</code>!</p>
+    <pre><code class="javascript">// hello-bye.js
+function say (text) {
+  return function () {
+    console.log(text);
+  };
+}
+
+var hello = say("hello world!");
+var bye = say("bye world...");
+
+hello();
+bye();</code></pre>
+    <p>Weeee! <code>node hello-bye.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Relative module magic</h1>
+    <p>If we have a file named <code>my-favorite-color.js</code></span>:</p>
+    <pre><code class="javascript">// my-favorite-color.js
+
+var myFavoriteColor = "green"
+
+module.exports = myFavoriteColor;</code></pre>
+    <p>Then in another file we can "require" the first file with:</p>
+    <pre><code class="javascript">var myFavoriteColor = require("./my-favorite-color");
+
+console.log(myFavoriteColor); // green</code></pre>
+  </section>
+
+  <section>
+    <p>The 'say' function would make a great require-able module. :)<p>
+    <pre><code class="javascript">// say.js
+function say (text) {
+  return function () {
+    console.log(text);
+  };
+}
+
+module.exports = say;</code></pre>
+    <pre><code class="javascript">// hello-bye-modular.js
+var say = require('./say');
+
+var hello = say("hello world!");
+var bye = say("bye world...");
+
+hello();
+bye();</code></pre>
+    <p>The moment of truth, <code>node hello-bye-modular.js</code>.</p>
+  </section>
+
+  <section>
+    <p>But we can go deeper into modularity. :)<p>
+    <pre><code class="javascript">// hello.js
+var say = require('./say');
+
+module.exports = say("hello world!");</code></pre>
+    <pre><code class="javascript">// bye.js
+var say = require('./say');
+
+module.exports = say("bye world...");</code></pre>
+    <pre><code class="javascript">// hello-bye-even-more-modular.js
+var hello = require('./hello');
+var bye = require('./bye');
+
+hello();
+bye();</code></pre>
+    <p>Tee hee hee.. <code>node hello-bye-even-more-modular.js</code></p>
+  </section>
+
+  <section>
+    <h1>Hello and Delayed Bye</h1>
+    <p>So that's cool, but who says 'hello' and then immediately says 'bye'. What if we wanted to delay our 'bye' for a bit?</p>
+    <pre><code class="javascript">// hello-delayed-bye.js
+//-----------------------------------------------------
+var hello = require('./hello');
+var bye = require('./bye');
+
+// say 'hello'
+hello();
+
+// set one-shot timeout (in milliseconds) to say 'bye'
+setTimeout(bye, 5 * 1000);</code></pre>
+    <p>Does it work? <code>node hello-delayed-bye.js</code></p>
+  </section>
+
+  <section>
+    <h1>Repeated Hello</h1>
+    <p>Actually, it's sad to say 'bye'. Let's just keep saying 'hello'!</p>
+    <pre><code class="javascript">// hello-on-repeat.js
+//-------------------------------------------------------
+var hello = require('./hello');
+
+// set repeating interval (in milliseconds) to say hello
+setInterval(hello, 1 * 1000);</code></pre>
+    <p>Hello? <code>node hello-on-repeat.js</code></p>
+  </section>
+
+  <section>
+    <h1>Say With An Argument</h1>
+    <p>Saying 'hello' is boring now, what if we could specify what to say when we run our code?</p>
+    <pre><code class="javascript">// say-arg.js
+//-------------------------------------------------------
+var say = require('./say');
+
+// get text from command-line arguments
+var text = process.argv[1];
+
+// set repeating interval (in milliseconds) to say text
+setInterval(say(text), 1 * 1000);</code></pre>
+    <p>Meow. <code>node say-arg.js 'rawrrrrr! :3'</code></p>
+  </section>
+
+  <section>
+    <h1>Writing a file</h1>
+    <p>So now we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
+    <pre><code class="javascript">// write-journal.js
+//-------------------------------------------------
+var fs = require('fs');
+// get text from command-line arguments
+var text = process.argv[1];
+// append entry to journal
+fs.appendFileSync("journal.txt", text);</code></pre>
+    <p>Write with <code>node write-journal.js 'today i learned i/o'</code> and read with <code>cat journal.txt</code></p>
+  </section>
+
+  <section>
+    <h1>Writing a directory</h1>
+    <p>Having a single journal file for all entries is no good, let's name our entries and store them as separate files in a directory.</p>
+    <pre><code class="javascript">// write-journals.js
+//-------------------------------------------------
+var fs = require('fs');
+// get name from command-line arguments
+var name = process.argv[1];
+// get text from command-line arguments
+var text = process.argv[2];
+// write entry to journal
+fs.writeFileSync("journal/" + name, entry);</code></pre>
+    <p>Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journals.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code></p>
+  </section>
+
+  <section>
+    <h1>Listing our journal entries</h1>
+    <p>Now that we have a directory of our journal entries, let's list their names.</p>
+    <pre><code class="javascript">// list-journals.js
+//-------------------------------------------------
+var fs = require('fs');
+
+// get entry names from journal
+var entryNames = fs.readdirSync("journal");
+
+// for each entry name, log it to console
+entryNames.forEach(console.log);</pre></code>
+    <p>List your journal entries with <code>node list-journals.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Count length of journals</h1>
+    <p>Sweet, we have the names of the journal entries, now let's count how long the entries are (by number of characters).</p>
+    <pre><code class="javascript">// count-journals.js
+//-------------------------------------------------
+var fs = require('fs');
+
+// get entry names from journal
+var entryNames = fs.readdirSync("journal");
+
+// for each entry name,
+entryNames.forEach(function (entryName) {
+  // read entry from journal
+  var entry = fs.readFileSync(entryName, { encoding: 'utf8' });
+  // print name and length of entry
+  console.log(entryName, ":", entry.length);
+});</pre></code>
+    <p>Count your journal entries with <code>node count-journals.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Async Magic</h1>
+    <p>
+      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially.
+    </p>
+    <pre><code class="javascript">var contents = fs.readFileSync("my-file.txt");
+console.log("file has been read");
+console.log("this line has been run");</code></pre>
+
+    <p>
+      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously.
+    </p>
+    <pre><code class="javascript">fs.readFile("my-file.txt", function (err, contents) {
+  console.log("file has been read");
+});
+console.log("this line has been run");</code></pre>
+  </section>
+
+<!--
+    <p>
+      Everything we've done so far is "synchronous": tasks are handled sequentially, where the interpreter "blocks" any subsequent line until the previous line is finished.
+    <pre><code class="javascript">var contents = fs.readFileSync("my-file.txt");
+console.log(contents.toString());</code></pre>
+    <p>
+      The power of Javascript I/O lies in being "asynchronous": tasks are handled simultaneously, where the interpreter is "non-blocking" and instead each async task accepts a "callback" function to run when the previous task is done.
+    </p>
+-->
+
+  <section>
+    <h1>Callback Magic</h1>
+    <p>
+      Callbacks are functions that are executed asynchronously, or at a later time.
+    </p>
+    <pre><code class="javascript">var fs = require('fs');
+
+function onFileRead (err, contents) {
+  if (err) { throw err; }
+  var number = parseInt(contents) + 1;
+  fs.writeFile("number.txt", number.toString(), onFileWrite);
+}
+
+function onFileWrite (err) {
+  if (err) { throw err; }
+  console.log("done!");
+}
+
+fs.readFile("number.txt", onFileRead);</code></pre>
+    <!-- The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function finishing. -->
+  </section>
+
+<!--
+  <section>
+    <h1>Speak Art</h1>
+    <p>Making sense is overrated, let's speak art.</p>
+    <pre class="pre-scrollable"><code class="javascript">// speak-art.js
+//----------------------------------------------------------
+
+function randomNumberInRange (min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+function randomItemInArray (array) {
+  return array[randomNumberInRange(0, array.length)];
+}
+
+// words inspired by http://youtu.be/7Ye4facLqlM
+var words = [
+  "blue", "ribbon", "yarn", "pidgeon", "dawn",
+  "double", "take", "\"yawn\"", "never", "sleep", "eat",
+  "habit", "hygiene", "hydrate", "shitty", "wine", "art",
+  "starcraft", "ramen", "night", "or", "morning",
+  "coffee", "code", "fish", "and", "chips",
+];
+
+function randomWord () {
+  return randomItemInArray(words);
+}
+
+function speak () {
+  var words = [randomWord(), randomWord(), randomWord()];
+  console.log(words.join(" "));
+}
+
+setInterval(speak, 1 * 1000); // time in milliseconds</code></pre>
+    <p>Meow Meow Meow. <code>node speak-art.js</code></p>
+  </section>
+
+  <section>
+    <h1>Speak Art With Modules</h1>
+    <p>Hmm, maybe someone else already wrote <code>randomNumberInRange</code>.
+    <p>Yup, <code>npm install random-number-in-range</code>.</p>
+    <pre class="pre-scrollable"><code class="javascript">// speak-art-1.js
+//--------------------------------------------------------------
+
+var randomNumberInRange = require('random-number-in-range');
+
+function randomItemInArray (array) {
+  return array[randomNumberInRange(0, array.length)];
+}
+
+// words inspired by http://youtu.be/7Ye4facLqlM
+var words = [
+  "blue", "ribbon", "yarn", "pidgeon", "dawn",
+  "double", "take", "\"yawn\"", "never", "sleep", "eat",
+  "habit", "hygiene", "hydrate", "shitty", "wine", "art",
+  "starcraft", "ramen", "night", "or", "morning",
+  "coffee", "code", "fish", "and", "chips",
+];
+
+function randomWord () {
+  return randomItemInArray(words);
+}
+
+function speak () {
+  var words = [randomWord(), randomWord(), randomWord()];
+  console.log(words.join(" "));
+}
+
+setInterval(speak, 1 * 1000); // time in milliseconds</code></pre>
+    <p>oewMay. <code>node speak-art-1.js</code></p>
+  </section>
+
+  <section>
+    <h1>Speak Art With Modules</h1>
+    <p>Hmm, maybe someone else already wrote <code>randomItemInArray</code>.
+    <p>Yup, <code>npm install random-item-in-array</code>.</p>
+    <pre class="pre-scrollable"><code class="javascript">// speak-art-2.js
+//--------------------------------------------------------------
+
+var randomItemInArray = require('random-item-in-array');
+
+// words inspired by http://youtu.be/7Ye4facLqlM
+var words = [
+  "blue", "ribbon", "yarn", "pidgeon", "dawn",
+  "double", "take", "\"yawn\"", "never", "sleep", "eat",
+  "habit", "hygiene", "hydrate", "shitty", "wine", "art",
+  "starcraft", "ramen", "night", "or", "morning",
+  "coffee", "code", "fish", "and", "chips",
+];
+
+function randomWord () {
+  return randomItemInArray(words);
+}
+
+function speak () {
+  var words = [randomWord(), randomWord(), randomWord()];
+  console.log(words.join(" "));
+}
+
+setInterval(speak, 1 * 1000); // time in milliseconds</code></pre>
+    <p>ReowMawr. <code>node speak-art-2.js</code></p>
+  </section>
+
+  <section>
+    <h1>Speak Random Words</h1>
+    <p>Hmm, maybe someone else already wrote a random word generator.
+    <p>Yup, <code>npm install random-word</code>.</p>
+    <p>While we're at it, let's <code>npm install repeat-function</code> to clean our code even more.</p>
+    <pre class="pre-scrollable"><code class="javascript">// speak-random.js
+//-----------------------------------------------------------
+var randomWord = require('random-word');
+var repeatFunction = require('repeat-function');
+
+function speak () {
+  var words = repeatFunction(3, randomWord);
+  console.log(words.join(" "));
+}
+
+setInterval(speak, 1 * 1000); // time in milliseconds</code></pre>
+    <p>Easy Easy Easy! <code>node speak-random.js</code></p>
+  </section>
+
+  <section>
+    <h1>Write random words</h1>
+    <p>
+      Now that we have a way of generating random words, how about we write 100 sentences of 3 words each into a "journal.txt". :)
+    </p>
+    <p>
+      We'll be using the built-in <a href="https://iojs.org/api/fs.html"><code>fs</code></a> module to write to a file.
+    </p>
+    <pre class="pre-scrollable"><code class="javascript">// write-random-journal.js
+//------------------------------------------------------
+var fs = require('fs');
+var randomWord = require('random-word');
+var repeatFunction = require('repeat-function');
+
+function randomSentence () {
+  var words = repeatFunction(3, randomWord);
+  return words.join(" ") + ".";
+}
+var sentences = repeatFunction(100, randomSentence);
+
+fs.writeFileSync("journal.txt", sentences.join(" "));</code></pre>
+    <p>Run <code>node write-random-journal.js</code> to write, run <code>cat journal.txt</code> to read.</p>
+  </section>
+
+  <section>
+    <h1>Write more random words</h1>
+    <p>
+      We need more words! How about we write 10 journals of 1 to 10,000 sentences of 3 to 17 words.. :)
+    </p>
+    <pre class="pre-scrollable" style="max-height: 250px;"><code class="javascript">// write-random-journals.js
+//----------------------------------------------------------------
+var fs = require('fs');
+var randomNumberInRange = require('random-number-in-range');
+var randomWord = require('random-word');
+var repeatFunction = require('repeat-function');
+
+function randomJournal () {
+  var numSentences = randomNumberInRange(0, 11);
+  var sentences = repeatFunction(numSentences, randomSentence);
+  return sentences.join(" ");
+}
+function randomSentence () {
+  var numWords = randomNumberInRange(3, 18);
+  var words = repeatFunction(numWords, randomWord);
+  return words.join(" ") + ".";
+}
+
+var journals = repeatFunction(10, randomJournal);
+
+journals.forEach(function (journal) {
+  var name = "journals/" + randomWord() + ".txt";
+  fs.writeFileSync(name, journal);
+});</code></pre>
+    <p>
+      Start by creating a new directory to hold our journals with <code>mkdir journals</code>. Then run <code>node write-random-journals.js</code> to write, and run <code>ls -lh journals</code> to see a list of what we've made.</p>
+  </section>
+    
+  <section>
+    <h1>Read Our Journal List</h1>
+    <p>
+      Okay okay okay, enough writing. Let's read our <code>journals</code>, starting with a simple list of their names.
+    </p>
+    <pre><code class="javascript">// read-journal-names.js
+
+var fs = require('fs');
+
+// read journal names from filesystem
+var journalNames = fs.readdirSync("journals");
+ 
+// for each journal name, log it in the console
+journalNames.forEach(console.log);
+</code></pre>
+    <p><code>node read-journal-names.js</code> should look similar to <code>ls journals</code></p>
+  </section>
+
+  <section>
+    <h1>Read Our Journals</h1>
+    <p>
+      Now that we have a list of our journal names, let's read the words! Although instead of filling our console with words, let's count how many words are in each journal and print that.
+    </p>
+    <pre class="pre-scrollable"><code class="javascript">// read-journal-lengths.js
+var fs = require('fs');
+
+// read journal names from filesystem
+var journalNames = fs.readdirSync("journals");
+
+// for each journal name,
+journalNames.forEach(function (name) {
+  // read journal from filesystem
+  var journal = fs.readFileSync(name, { encoding: 'utf8' });
+  // split journal into words
+  var words = journal.split(/[\.\s]+/);
+  // log journal name and number of words
+  console.log(name, words.length);
+});
+</code></pre>
+  </section>
+-->
+
 </article>
 <!--
-function to log something
-
-setTimeout the log
-
-setInterval the log
-
 sync get list of logos and count size
 
 async get list of logos and count size

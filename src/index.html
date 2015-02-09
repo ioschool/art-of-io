@@ -36,7 +36,7 @@ scripts:
       <li>events</li>
       <li>streams</li>
     </ul>
-    <p>By becoming proficient with these core forms of magic, you'll be able to alter space and time... <em>cyber</em> space and time.</p>
+    <p>By becoming proficient with the above, you'll have no trouble altering space and time... <em>cyber</em> space and time.</p>
   </section>
 
   <section>
@@ -113,6 +113,8 @@ bye();</code></pre>
     <p>Weeee! <code>node hello-bye.js</code>.</p>
   </section>
 
+  <!-- TODO introduce module magic -->
+
   <section>
     <h1>Relative module magic</h1>
     <p>If we have a file named <code>my-favorite-color.js</code></span>:</p>
@@ -168,8 +170,48 @@ bye();</code></pre>
   </section>
 
   <section>
+    <h1>Async Magic</h1>
+    <p>
+      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially.
+    </p>
+    <p>
+      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously.
+    </p>
+    <blockquote>
+      For example, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
+    </blockquote>
+  </section>
+
+  <section>
+    <h1>Callback Magic</h1>
+    <p>
+      Callbacks are functions that are executed asynchronously, or at a later time.
+    </p>
+    <p>
+      At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your food is ready.
+    </p>
+  </section>
+
+  <section>
+    <h1>Sync vs Async Syntax</h1>
+    <pre><code class="javascript">// hello-bye-even-more-modular.js
+var hello = require('./hello');
+var bye = require('./bye');
+
+hello();
+bye();</code></pre>
+    <pre><code class="javascript">// hello-bye-async.js
+var hello = require('./hello');
+var bye = require('./bye');
+
+process.nextTick(hello);
+bye();
+</code></pre>
+  </section>
+
+  <section>
     <h1>Hello and Delayed Bye</h1>
-    <p>So that's cool, but who says 'hello' and then immediately says 'bye'. What if we wanted to delay our 'bye' for a bit?</p>
+    <p>Who says 'hello' and then immediately says 'bye'. What if we wanted to delay our 'bye' for a bit?</p>
     <pre><code class="javascript">// hello-delayed-bye.js
 //-----------------------------------------------------
 var hello = require('./hello');
@@ -179,7 +221,7 @@ var bye = require('./bye');
 hello();
 
 // set one-shot timeout (in milliseconds) to say 'bye'
-setTimeout(bye, 5 * 1000);</code></pre>
+process.setTimeout(bye, 5 * 1000);</code></pre>
     <p>Does it work? <code>node hello-delayed-bye.js</code></p>
   </section>
 
@@ -273,24 +315,6 @@ entryNames.forEach(function (entryName) {
     <p>Count your journal entries with <code>node count-journals.js</code>.</p>
   </section>
 
-  <section>
-    <h1>Async Magic</h1>
-    <p>
-      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially.
-    </p>
-    <pre><code class="javascript">var contents = fs.readFileSync("my-file.txt");
-console.log("file has been read");
-console.log("this line has been run");</code></pre>
-
-    <p>
-      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously.
-    </p>
-    <pre><code class="javascript">fs.readFile("my-file.txt", function (err, contents) {
-  console.log("file has been read");
-});
-console.log("this line has been run");</code></pre>
-  </section>
-
 <!--
     <p>
       Everything we've done so far is "synchronous": tasks are handled sequentially, where the interpreter "blocks" any subsequent line until the previous line is finished.
@@ -302,15 +326,14 @@ console.log(contents.toString());</code></pre>
 -->
 
   <section>
-    <h1>Callback Magic</h1>
+    <h1>Advanced Callback Magic</h1>
     <p>
-      Callbacks are functions that are executed asynchronously, or at a later time.
+      The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function finishing.
     </p>
-    <pre><code class="javascript">var fs = require('fs');
-
-function onFileRead (err, contents) {
+    <pre><code class="javascript">function onFileRead (err, contents) {
   if (err) { throw err; }
-  var number = parseInt(contents) + 1;
+  var number = parseInt(contents);
+  number++;
   fs.writeFile("number.txt", number.toString(), onFileWrite);
 }
 
@@ -320,7 +343,6 @@ function onFileWrite (err) {
 }
 
 fs.readFile("number.txt", onFileRead);</code></pre>
-    <!-- The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function finishing. -->
   </section>
 
 <!--

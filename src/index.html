@@ -221,23 +221,19 @@ bye();</code></pre>
   </section>
 
   <section>
-    <h1>Sync vs Async Syntax</h1>
+    <h1>Sync vs Async</h1>
     <pre><code class="javascript">// hello-bye-more-modular.js
 var hello = require('./hello');
 var bye = require('./bye');
-
-hello();
-bye();</code></pre>
+hello(); // say 'hello'
+bye(); // say 'bye'</code></pre>
     <pre><code class="javascript">// hello-bye-async.js
 var timers = require('timers');
 var hello = require('./hello');
 var bye = require('./bye');
 
-// say 'hello' on next event loop
-timers.setImmediate(hello);
-
-// say 'bye'
-bye();
+timers.setImmediate(hello); // say 'hello' immediately after
+bye(); // say 'bye'
 </code></pre>
   </section>
 
@@ -245,39 +241,38 @@ bye();
     <h1>Hello and Delayed Bye</h1>
     <p>What if we wanted to say 'hello' and delay our 'bye' for a bit?</p>
     <pre><code class="javascript">// hello-delayed-bye.js
-//-----------------------------------------------------
+
 var timers = require('timers');
 var hello = require('./hello');
 var bye = require('./bye');
 
-// say 'hello' on next event loop;
-timers.setImmediate(hello);
+timers.setImmediate(hello); // say 'hello' immediately after
 
 // delay time (in milliseconds)
 // before saying 'bye'
 timers.setTimeout(bye, 5 * 1000);</code></pre>
-    <p>Does it work? <code>node hello-delayed-bye.js</code></p>
+    <p>Hello......... bye. <code>node hello-delayed-bye.js</code></p>
   </section>
 
   <section>
     <h1>Repeated Hello</h1>
     <p>Actually, it's sad to say 'bye'. Let's keep saying 'hello'!</p>
     <pre><code class="javascript">// hello-on-repeat.js
-//-------------------------------------------------------
+
 var timers = require('timers');
 var hello = require('./hello');
 
 // repeat interval (in milliseconds)
 // to keep saying 'hello'
 timers.setInterval(hello, 1 * 1000);</code></pre>
-    <p>Hello? <code>node hello-on-repeat.js</code></p>
+    <p>Hello. Hello. Hello... <code>node hello-on-repeat.js</code></p>
   </section>
 
   <section>
     <h1>Say With An Argument</h1>
     <p>Saying 'hello' is boring now, what if we could specify what to say when we run our code?</p>
     <pre><code class="javascript">// say-arg.js
-//-------------------------------------------------------
+
 var timers = require('timers');
 var say = require('./say');
 
@@ -292,10 +287,10 @@ timers.setInterval(say(speech), 1 * 1000);</code></pre>
   <section>
     <h1>Callback Convention</h1>
     <p>
-      Most callbacks in I/O Javascript have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can alias to whatever you like when defining your callback functions).
+      Most callbacks in I/O Javascript have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can name to whatever you like when defining your callback functions).
     </p>
     <pre><code class="javascript">// read-me.js
-//-------------------------------------------------------
+
 var fs = require('fs');
 
 fs.readFile(__filename, function (err, result) {
@@ -309,13 +304,12 @@ fs.readFile(__filename, function (err, result) {
 
   <section>
     <h1>Writing a file</h1>
-    <p>So now we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
-    <pre><code class="javascript">// append-journal-txt.js
-//-------------------------------------------------------
+    <p>So now that we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
+    <pre><code class="javascript">// append-journal-txt.js -------------------------------------------
 var fs = require('fs');
 
 function appendJournal (entry, callback) {
-  // append entry to journal.txt file and pass callback
+  // append entry to journal.txt file and pass along callback
   fs.appendFile("./journal.txt", entry, callback);
 }
 
@@ -333,32 +327,33 @@ appendJournal(entry, defaultErrorHandler);</code></pre>
 
   <section>
     <h1>Writing a directory</h1>
-    <p>Having a single journal file for all entries is no good, let's name our entries and store them as separate files in a directory.</p>
-    <pre><code class="javascript">// write-journal.js
-//--------------------------------------------------------
+    <p class="small">
+      Having a single journal file for all entries is no good, let's name our entries and store them as separate files in a directory.
+    </p>
+    <pre><code class="javascript">// write-journal.js ---------------------------------------------------
 var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler')
 
 function appendJournal (name, entry, callback) {
-  // append entry to journal.txt file and pass callback
+  // append entry to respective journal file and pass along callback
   fs.appendFile("./journal/" + name, entry, callback);
 }
 
-// get name from command-line arguments
+// get name and text from command-line arguments
 var name = process.argv[1];
-// get text from command-line arguments
 var entry = process.argv[2];
 
 // append entry to journal, handling any errors
 appendJournal(name, entry, defaultErrorHandler);</code></pre>
-    <p>Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journal.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code></p>
+    <p class="small">
+      Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journal.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code>
+    </p>
   </section>
 
   <section>
     <h1>Listing our journal entries</h1>
     <p>Now that we have a directory of our journal entries, let's list their names.</p>
-    <pre><code class="javascript">// list-journal.js
-//---------------------------------------------------------------
+    <pre><code class="javascript">// list-journal.js -----------------------------------------------
 var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler');
 

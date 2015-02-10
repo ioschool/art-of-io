@@ -6,7 +6,7 @@ var QS = require('querystring');
 var query = QS.parse(window.location.search.substring(1));
 
 if (query.notes) {
-  document.querySelector('.presentation').classList.add('container');
+  document.querySelector('main').classList.add('container');
 } else {
   bespoke.from('.presentation', [
     require('bespoke-classes')(),

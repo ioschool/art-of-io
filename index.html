@@ -387,17 +387,18 @@ getEntryNames(function (err, entryNames));
     <p>List your journal entries with <code>node list-journal.js</code>.</p>
   </section>
 
+
   <section>
-    <h1>Advanced Callback Magic</h1>
+    <h1>Event Magic</h1>
     <p>
-      The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function finishing.
+      Javascript I/O uses "events", or when things happen. Timeouts, intervals, connections, clicks, key presses, etc are all events. When an async function is run, the associated callback listens for when the async function is done, and handles the event.
     </p>
   </section>
 
   <section>
-    <h1>Event Loop Magic</h1>
+    <h1>Advanced Callback Magic</h1>
     <p>
-      When an async function is run, the associated callback is registered on the "event loop". Inside io.js there is a list of things that have been run but haven't reported back yet, so io.js loops over the list again and again checking if they are finished. After they finish any callbacks that depended on them finishing will be run.
+      The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function being done.
     </p>
   </section>
 
@@ -441,12 +442,12 @@ getEntryNames(function (err, entryNames));
       <a href="http://callbackhell.com/">Callback Hell</a>
     </h1>
     <p>
-      Asynchronous javascript, or javascript that uses callbacks, is hard to get right intuitively. A lot of code ends up looking messy, with nested callbacks indenting on forever. If you notice this, <a href="http://callbackhell.com">here's a guide to help</a>. :)
+      Async Javascript, or Javascript that uses callbacks, is hard to get right intuitively. A lot of code ends up looking messy, with nested callbacks indenting on forever. If you notice this, <a href="http://callbackhell.com">here's a guide to help</a>. :)
     </p>
   </section>
 
   <section>
-    <h1>Go Forth and Magic</h1>
+    <h1>Follow Your Dreams</h1>
     <img src="images/follow_your_dreams.png" height="200" width="388" />
     <blockquote>
       It does not matter how or frivolous a project seems: everything you do adds to

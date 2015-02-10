@@ -192,21 +192,22 @@ bye();</code></pre>
 
   <section>
     <h1>Async Magic (1/3)</h1>
+    <blockquote>
+      For example, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
+    </blockquote>
+  </section>
+
+  <section>
+    <h1>Async Magic (2/3)</h1>
     <p>
       Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially, the interpreter waits to execute the next task until the current task (like reading from the filesystem) is done.
     </p>
   </section>
   <section>
-    <h1>Async Magic (2/3)</h1>
+    <h1>Async Magic (3/3)</h1>
     <p>
       The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, the interpreter never waits and queues up tasks to respond when each current task is done.
     </p>
-  </section>
-  <section>
-    <h1>Async Magic (3/3)</h1>
-    <blockquote>
-      For example, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
-    </blockquote>
   </section>
 
   <section>

@@ -21,7 +21,7 @@ scripts:
   </section>
 
   <section>
-    <h1>Pre-requisites</h1>
+    <h1>Pre-Requisites</h1>
     <p>
       To begin, you need to <a href="/guides/install-js">install Javascript on your machine</a>.
     </p>
@@ -336,10 +336,15 @@ var filenames = [
   "./hello.js", "./bye.js", "./say.js",
 ];
 
-var afterReadFile = require('./after-read-file');
+function afterReadFile (name) {
+  return function (err, result) {
+    if (err) { throw err; }
+    console.log(name);
+  };
+}
 
 filenames.forEach(function (filename) {
-  fs.readFile(filename[0], afterReadFile);
+  fs.readFile(filename[0], afterReadFile(filename));
 });</code></pre>
   </section>
 

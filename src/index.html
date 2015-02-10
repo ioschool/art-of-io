@@ -43,27 +43,41 @@ scripts:
 
   <section>
     <h1>Hello World!</h1>
-    <p>To say hello, write a file <code>hello.js</code> with the following:</p>
-    <pre><code class="javascript">// hello.js
+    <p>To say hello, write a file <code>hello-world.js</code> with the following:</p>
+    <pre><code class="javascript">// hello-world.js
 
 console.log('hello world!');</code></pre>
-    <p>Run the file with <code>node hello.js</code>.</p>
+    <p>Run the file with <code>node hello-world.js</code>.</p>
   </section>
 
   <section>
     <h1>Function Magic</h1>
     <p>Functions accept input, return output, and maybe perform effects.</p>
-    <p>Functions allow us to think at a higher level by "abstracting over functionality".</p>
-    <pre><code class="javascript">// add-ten.js
+    <p>By "abstracting out" lower details, functions allow us to think at a higher level.</p>
+    <pre><code class="javascript">// add-tax.js
     
-// `addTen` is a function
+// `addTax` is a function
 // that accepts a number `x`
-// and returns a number `x + 10`.
-function addTen (x) {
-  return x + 10;
+function addTax (x) {
+  // and returns `x` multiplied by `1.15`.
+  return x * 1.15;
 }
 
-addTen(100); // 110</code></pre>
+addTax(100); // 115</code></pre>
+  </section>
+
+  <section>
+    <h1>Functional Hello</h1>
+    <p>Great, now we let's abstract our hello into a function.</p>
+    <p>Let's write a new file <code>hello-world-function.js</code>:</p>
+    <pre><code class="javascript">// hello-world-function.js
+
+function hello () {
+  console.log('hello world!');
+}
+
+hello();</code></pre>
+    <p>See our function run with <code>node hello-world-function.js</code>.</p>
   </section>
 
   <section>
@@ -74,37 +88,27 @@ addTen(100); // 110</code></pre>
   </section>
 
   <section>
-    <h1>Functional Hello</h1>
-    <p>Great, now we let's abstract our hello into a function.</p>
-    <p>Let's write a new file <code>functional-hello.js</code>:</p>
-    <pre><code class="javascript">// functional-hello.js
-
-function hello () {
-  console.log('hello world!');
-}
-
-hello();</code></pre>
-  </section>
-
-  <section>
     <h1>Closure Magic</h1>
     <p>Closures are a useful pattern of functions that "close over variables".</p>
-    <pre><code class="javascript">// add-number.js
-
-// `addNumber` is a function
+    <pre><code class="javascript">// multiply-by.js ---------------------------
+// `multiplyBy` is a function
 // that accepts a number `n`
-// and returns a function that
-//  accepts a number `x`
-//  and returns a number `x + n`. 
-var addNumber = function (n) {
+function multiplyBy (n) {
+  // and returns a function that
+  //   accepts a number `x`
+  //   and returns `x` multiplied by `n`.
   return function (x) {
-    return x + n;
+    return x * n;
   };
 };
 
-var addTen = addNumber(10);
+var double = multiplyBy(2);
+var triple = multiplyBy(3);
+var addTax = multiplyBy(1.15);
 
-addTen(100); // 110</code></pre>
+double(100); // 200
+triple(100); // 300
+addTax(100); // 115</code></pre>
   </section>
 
   <section>
@@ -137,14 +141,14 @@ bye();</code></pre>
   </section>
 
   <section>
-    <h1>Relative Require Magic</h1>
+    <h1>Require Magic</h1>
     <p>If we have a file named <code>my-favorite-color.js</code></span>:</p>
     <pre><code class="javascript">// my-favorite-color.js
 
 var myFavoriteColor = "green"
 
 module.exports = myFavoriteColor;</code></pre>
-    <p>Then in another file we can "require" the first file with:</p>
+    <p>Then in another file in the same directory we can "require" the first file with:</p>
     <pre><code class="javascript">var myFavoriteColor = require("./my-favorite-color");
 
 console.log(myFavoriteColor); // green</code></pre>
@@ -193,7 +197,7 @@ bye();</code></pre>
   <section>
     <h1>Async Magic (1/3)</h1>
     <blockquote>
-      For example, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
+      For example, when you're at a restaurant, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
     </blockquote>
   </section>
 
@@ -206,14 +210,14 @@ bye();</code></pre>
   <section>
     <h1>Async Magic (3/3)</h1>
     <p>
-      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, the interpreter never waits and queues up tasks to respond when each current task is done.
+      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, the interpreter never waits and instead queues up tasks to respond when each current task is done.
     </p>
   </section>
 
   <section>
     <h1>Callback Magic</h1>
     <blockquote>
-      At many restaurants you get a number to put on your table while you wait for your food. These are similar to callbacks. They tell the server what to do after your food is ready.
+      When you order at a restaurant, the arguments of your request (what you order) are written down with an associated callback (what to do when your order is ready).
     </blockquote>
     <p>
       Callbacks are functions that are executed "async", or at a later time. As with any function, they can be stored in variables and passed around with different names.
@@ -225,14 +229,15 @@ bye();</code></pre>
     <pre><code class="javascript">// hello-bye-more-modular.js
 var hello = require('./hello');
 var bye = require('./bye');
+
 hello(); // say 'hello'
 bye(); // say 'bye'</code></pre>
     <pre><code class="javascript">// hello-bye-async.js
-var timers = require('timers');
+var timers = require('timers'); // a built-in module
 var hello = require('./hello');
 var bye = require('./bye');
 
-timers.setImmediate(hello); // say 'hello' immediately after
+timers.setTimeout(hello, 0); // say 'hello' immediately after
 bye(); // say 'bye'
 </code></pre>
   </section>
@@ -242,11 +247,11 @@ bye(); // say 'bye'
     <p>What if we wanted to say 'hello' and delay our 'bye' for a bit?</p>
     <pre><code class="javascript">// hello-delayed-bye.js
 
-var timers = require('timers');
+var timers = require('timers'); // a built-in module
 var hello = require('./hello');
 var bye = require('./bye');
 
-timers.setImmediate(hello); // say 'hello' immediately after
+timers.setTimeout(hello, 0); // say 'hello' immediately after
 
 // delay time (in milliseconds)
 // before saying 'bye'
@@ -277,7 +282,7 @@ var timers = require('timers');
 var say = require('./say');
 
 // get speech from command-line arguments
-var speech = process.argv[1];
+var speech = process.argv[2];
 
 // set repeating interval (in milliseconds) to say speech
 timers.setInterval(say(speech), 1 * 1000);</code></pre>
@@ -285,28 +290,88 @@ timers.setInterval(say(speech), 1 * 1000);</code></pre>
   </section>
 
   <section>
-    <h1>Callback Convention</h1>
+    <h1>fs Magic</h1>
     <p>
-      Most callbacks in I/O Javascript have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can name to whatever you like when defining your callback functions).
+      <a href="https://iojs.org/api/fs.html"><code>fs</code></a> is a built-in module used for reading from and writing to the filesystem.
     </p>
     <pre><code class="javascript">// read-me.js
 
 var fs = require('fs');
 
-fs.readFile(__filename, function (err, result) {
-  // if error, handle error
+var filename = "./read-me.js";
+
+fs.readFile(filename, afterReadFile);
+
+function afterReadFile (err, result) {
+  // if error, let's throw it
   if (err) { throw err; }
 
   // otherwise, do something with result
-  console.log(result);
+  console.log(result.toString());
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Event Magic</h1>
+    <p>
+      Javascript I/O uses "events", or when things happen. Timeouts, intervals, connections, clicks, key presses, etc are all events. When an async function is run, the associated callback listens for when the async function is done, and handles the event.
+    </p>
+  </section>
+
+  <section>
+    <h1>Callback Convention</h1>
+    <p>
+      Most callbacks in Javascript I/O have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can name to whatever you like when defining your callback functions).
+    </p>
+  </section>
+
+  <section>
+    <h1>Async Magic</h1>
+    <pre><code class="javascript">// read-more.js
+
+var fs = require('fs');
+
+var filenames = [
+  "./read-me.js", "./read-more.js",
+  "./hello.js", "./bye.js", "./say.js",
+];
+
+var afterReadFile = require('./after-read-file');
+
+filenames.forEach(function (filename) {
+  fs.readFile(filename[0], afterReadFile);
 });</code></pre>
   </section>
 
+  <section>
+    <h1>Advanced Callback Magic</h1>
+    <p>
+      The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function being done.
+    </p>
+  </section>
+
+  <section>
+    <h1>Go Forth and Magic</h1>
+    <h2><a href="http://nodeschool.io">NodeSchool</a></h2>
+    <ul>
+      <li><a href="http://nodeschool.io#javascripting">javascripting</a>: Javascript workshop</li>
+      <li><a href="http://nodeschool.io#learnyounode">learnyounode</a>: Async I/O workshop</li>
+    </ul>
+    <img src="images/follow_your_dreams.png" height="200" width="388" />
+  </section>
+
+<!--
   <section>
     <h1>Writing a file</h1>
     <p>So now that we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
     <pre><code class="javascript">// append-journal-txt.js -------------------------------------------
 var fs = require('fs');
+
+// get entry from command-line arguments
+var entry = process.argv[2];
+
+// append entry to journal, handling any errors
+appendJournal(entry, defaultErrorHandler);
 
 function appendJournal (entry, callback) {
   // append entry to journal.txt file and pass along callback
@@ -315,13 +380,7 @@ function appendJournal (entry, callback) {
 
 function defaultErrorHandler (err) {
   if (err) { throw err; } // nothing better to do
-}
-
-// get entry from command-line arguments
-var entry = process.argv[1];
-
-// append entry to journal, handling any errors
-appendJournal(entry, defaultErrorHandler);</code></pre>
+}</code></pre>
     <p>Write with <code>node append-journal-txt.js 'today i learned i/o'</code> and read with <code>cat journal.txt</code></p>
   </section>
 
@@ -334,17 +393,17 @@ appendJournal(entry, defaultErrorHandler);</code></pre>
 var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler')
 
+// get name and text from command-line arguments
+var name = process.argv[2];
+var entry = process.argv[3];
+
+// append entry to journal, handling any errors
+appendJournal(name, entry, defaultErrorHandler);
+
 function appendJournal (name, entry, callback) {
   // append entry to respective journal file and pass along callback
   fs.appendFile("./journal/" + name, entry, callback);
-}
-
-// get name and text from command-line arguments
-var name = process.argv[1];
-var entry = process.argv[2];
-
-// append entry to journal, handling any errors
-appendJournal(name, entry, defaultErrorHandler);</code></pre>
+}</code></pre>
     <p class="small">
       Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journal.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code>
     </p>
@@ -357,34 +416,20 @@ appendJournal(name, entry, defaultErrorHandler);</code></pre>
 var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler');
 
-function getEntryNames (callback) {
-  // get entry names from journal directory and pass callback
-  fs.readdir("./journal", callback);
-}
-
 getEntryNames(function (err, entryNames));
   if (err) { return defaultErrorHandler(err); }
 
   // for each entry name, log it to console
   entryNames.forEach(console.log);
-});</pre></code>
+});
+
+function getEntryNames (callback) {
+  // get entry names from journal directory and pass callback
+  fs.readdir("./journal", callback);
+}</pre></code>
     <p>List your journal entries with <code>node list-journal.js</code>.</p>
   </section>
 
-
-  <section>
-    <h1>Event Magic</h1>
-    <p>
-      Javascript I/O uses "events", or when things happen. Timeouts, intervals, connections, clicks, key presses, etc are all events. When an async function is run, the associated callback listens for when the async function is done, and handles the event.
-    </p>
-  </section>
-
-  <section>
-    <h1>Advanced Callback Magic</h1>
-    <p>
-      The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function being done.
-    </p>
-  </section>
 
   <section>
     <h1>Count length of journals</h1>
@@ -395,13 +440,6 @@ var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler');
 
 var getEntryNames = require('./get-entry-names');
-
-function countEntry (entryName, callback) {
-  fs.readFile(entryName, function (err, entry) {
-    if (err) { return callback(err); } // pass error to callback
-    callback(null, entry.toString().length);
-  });
-}
 
 // get entry names
 getEntryNames(function (err, entryNames));
@@ -417,7 +455,14 @@ getEntryNames(function (err, entryNames));
       // print name and length of entry
       console.log(entryName, ":", count);
     });
-});</pre></code>
+});
+
+function countEntry (entryName, callback) {
+  fs.readFile(entryName, function (err, entry) {
+    if (err) { return callback(err); } // pass error to callback
+    callback(null, entry.toString().length);
+  });
+}</pre></code>
     <p>Count your journal entries with <code>node count-journal.js</code>.</p>
   </section>
 
@@ -445,8 +490,6 @@ getEntryNames(function (err, entryNames));
       - <a href="http://tinysubversions.com/2014/05/thoughts-on-small-projects/">"Thoughts on small projects"</a>
     </blockquote>
   </section>
-
-<!--
 
   <section>
     <h1>IN PROGRESS</h1>

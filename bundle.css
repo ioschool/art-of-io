@@ -6530,126 +6530,103 @@ button.close {
   }
 }
 /*
-Date: 17.V.2011
-Author: pumbur <pumbur@pumbur.net>
+  IR_Black style (c) Vasily Mikhailitchenko <vaskas@programica.ru>
 */
 
 .hljs {
   display: block;
   overflow-x: auto;
   padding: 0.5em;
-  background: #222;
+  background: #000;
+  color: #f8f8f8;
   -webkit-text-size-adjust: none;
 }
 
-.profile .hljs-header *,
-.ini .hljs-title,
-.nginx .hljs-title {
-  color: #fff;
-}
-
-.hljs-comment,
-.hljs-javadoc,
-.hljs-preprocessor,
-.hljs-preprocessor .hljs-title,
-.hljs-pragma,
 .hljs-shebang,
-.profile .hljs-summary,
-.diff,
-.hljs-pi,
-.hljs-doctype,
-.hljs-tag,
-.css .hljs-rules,
-.tex .hljs-special {
-  color: #444;
-}
-
-.hljs-string,
-.hljs-symbol,
-.diff .hljs-change,
-.hljs-regexp,
-.xml .hljs-attribute,
-.smalltalk .hljs-char,
-.xml .hljs-value,
-.ini .hljs-value,
-.clojure .hljs-attribute,
-.coffeescript .hljs-attribute {
-  color: #ffcc33;
-}
-
-.hljs-number,
-.hljs-addition {
-  color: #00cc66;
-}
-
-.hljs-built_in,
-.hljs-literal,
-.hljs-type,
-.hljs-typename,
-.go .hljs-constant,
-.ini .hljs-keyword,
-.lua .hljs-title,
-.perl .hljs-variable,
-.php .hljs-variable,
-.mel .hljs-variable,
-.django .hljs-variable,
-.css .funtion,
-.smalltalk .method,
-.hljs-hexcolor,
-.hljs-important,
-.hljs-flow,
-.hljs-inheritance,
-.parser3 .hljs-variable {
-  color: #32aaee;
+.hljs-comment,
+.hljs-javadoc {
+  color: #7c7c7c;
 }
 
 .hljs-keyword,
-.hljs-tag .hljs-title,
-.css .hljs-tag,
-.css .hljs-class,
-.css .hljs-id,
-.css .hljs-pseudo,
-.css .hljs-attr_selector,
-.hljs-winutils,
+.hljs-tag,
 .tex .hljs-command,
 .hljs-request,
-.hljs-status {
-  color: #6644aa;
+.hljs-status,
+.clojure .hljs-attribute {
+  color: #96cbfe;
+}
+
+.hljs-sub .hljs-keyword,
+.method,
+.hljs-list .hljs-title,
+.nginx .hljs-title {
+  color: #ffffb6;
+}
+
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-cdata,
+.hljs-filter .hljs-argument,
+.hljs-attr_selector,
+.apache .hljs-cbracket,
+.hljs-date,
+.coffeescript .hljs-attribute {
+  color: #a8ff60;
+}
+
+.hljs-subst {
+  color: #daefa3;
+}
+
+.hljs-regexp {
+  color: #e9c062;
 }
 
 .hljs-title,
-.ruby .hljs-constant,
-.vala .hljs-constant,
-.hljs-parent,
-.hljs-deletion,
-.hljs-template_tag,
-.css .hljs-keyword,
-.objectivec .hljs-class .hljs-id,
+.hljs-sub .hljs-identifier,
+.hljs-pi,
+.hljs-decorator,
+.tex .hljs-special,
+.hljs-type,
+.hljs-constant,
 .smalltalk .hljs-class,
-.lisp .hljs-keyword,
-.apache .hljs-tag,
-.nginx .hljs-variable,
-.hljs-envvar,
-.bash .hljs-variable,
-.go .hljs-built_in,
-.vbscript .hljs-built_in,
-.lua .hljs-built_in,
-.rsl .hljs-built_in,
-.tail,
-.avrasm .hljs-label,
-.tex .hljs-formula,
-.tex .hljs-formula * {
-  color: #bb1166;
-}
-
+.hljs-javadoctag,
 .hljs-yardoctag,
 .hljs-phpdoc,
 .hljs-dartdoc,
-.profile .hljs-header,
-.ini .hljs-title,
-.apache .hljs-tag,
-.parser3 .hljs-title {
-  font-weight: bold;
+.nginx .hljs-built_in {
+  color: #ffffb6;
+}
+
+.hljs-symbol,
+.ruby .hljs-symbol .hljs-string,
+.hljs-number,
+.hljs-variable,
+.vbscript,
+.hljs-literal {
+  color: #c6c5fe;
+}
+
+.css .hljs-tag {
+  color: #96cbfe;
+}
+
+.css .hljs-rules .hljs-property,
+.css .hljs-id {
+  color: #ffffb6;
+}
+
+.css .hljs-class {
+  color: #fff;
+}
+
+.hljs-hexcolor {
+  color: #c6c5fe;
+}
+
+.hljs-number {
+  color:#ff73fd;
 }
 
 .coffeescript .javascript,
@@ -6659,15 +6636,7 @@ Author: pumbur <pumbur@pumbur.net>
 .xml .vbscript,
 .xml .css,
 .xml .hljs-cdata {
-  opacity: 0.6;
-}
-
-.hljs,
-.hljs-subst,
-.diff .hljs-chunk,
-.css .hljs-value,
-.css .hljs-attribute {
-  color: #aaa;
+  opacity: 0.7;
 }
 
 .fork-me {

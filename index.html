@@ -32,6 +32,7 @@
   <section>
     <h1>The Art of I/O</h1>
     <h2>A magical introduction to input and output signals</h2>
+    <img src="images/mad_science_wizard.svg" />
     <h3><a href="http://ioschool.is">http://ioschool.is</a></h3>
   </section>
 
@@ -79,6 +80,13 @@ function addTen (x) {
 }
 
 addTen(100); // 110</code></pre>
+  </section>
+
+  <section>
+    <h1>Musical Functions</h1>
+    <a href="http://studio.substack.net">
+      <img src="images/studio.png" height="400" />
+    </a>
   </section>
 
   <section>
@@ -134,10 +142,18 @@ bye();</code></pre>
     <p>Weeee! <code>node hello-bye.js</code>.</p>
   </section>
 
-  <!-- TODO introduce module magic -->
+  <section>
+    <h1>Module Magic</h1>
+    <p>
+      Modules are chunks of code that be used in other chunks of code.
+    </p>
+    <p>
+      Be lazy! Try to write as little new code as possible and instead re-use <a href="https://anvaka.github.io/allnpmviz3d/">as much existing code</a> as possible.
+    </p>
+  </section>
 
   <section>
-    <h1>Relative module magic</h1>
+    <h1>Relative Require Magic</h1>
     <p>If we have a file named <code>my-favorite-color.js</code></span>:</p>
     <pre><code class="javascript">// my-favorite-color.js
 
@@ -181,62 +197,59 @@ module.exports = say("hello world!");</code></pre>
 var say = require('./say');
 
 module.exports = say("bye world...");</code></pre>
-    <pre><code class="javascript">// hello-bye-even-more-modular.js
+    <pre><code class="javascript">// hello-bye-more-modular.js
 var hello = require('./hello');
 var bye = require('./bye');
 
 hello();
 bye();</code></pre>
-    <p>Tee hee hee.. <code>node hello-bye-even-more-modular.js</code></p>
+    <p>Tee hee hee.. <code>node hello-bye-more-modular.js</code></p>
   </section>
 
   <section>
     <h1>Async Magic (1/3)</h1>
-    <p>
-      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially, the interpreter waits to execute the next task until the current task (like reading from the filesystem) is done.
-    </p>
-  </section>
-  <section>
-    <h1>Async Magic (2/3)</h1>
-    <p>
-      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, the interpreter never waits and queues up tasks to respond when each current task is done.
-    </p>
-  </section>
-  <section>
-    <h1>Async Magic (3/3)</h1>
     <blockquote>
       For example, if you order food they will immediately take your order and then make you wait around until the food is ready. In the meantime they can take other orders and start cooking food for other people. Imagine if you had to wait at the register for your food, blocking all other people from ordering while they cooked your food! This is called "blocking" I/O because all I/O (food orders) happens one at a time. Javascript, on the other hand, is "non-blocking", which means it can handle many orders at once.
     </blockquote>
   </section>
 
   <section>
-    <h1>Callback Magic</h1>
+    <h1>Async Magic (2/3)</h1>
     <p>
-      Callbacks are functions that are executed "async", or at a later time.
+      Everything we've done so far is "<strong>synchronous</strong>": tasks are handled sequentially, the interpreter waits to execute the next task until the current task (like reading from the filesystem) is done.
     </p>
-    <blockquote>
-      At many restaurants you get a number to put on your table while you wait for your food. These are similar to callbacks. They tell the server what to do after your food is ready.
-    </blockquote>
+  </section>
+  <section>
+    <h1>Async Magic (3/3)</h1>
+    <p>
+      The power of Javascript I/O lies in being "<strong>asynchronous</strong>": tasks are handled simultaneously, the interpreter never waits and queues up tasks to respond when each current task is done.
+    </p>
   </section>
 
   <section>
-    <h1>Sync vs Async Syntax</h1>
-    <pre><code class="javascript">// hello-bye-even-more-modular.js
+    <h1>Callback Magic</h1>
+    <blockquote>
+      At many restaurants you get a number to put on your table while you wait for your food. These are similar to callbacks. They tell the server what to do after your food is ready.
+    </blockquote>
+    <p>
+      Callbacks are functions that are executed "async", or at a later time. As with any function, they can be stored in variables and passed around with different names.
+    </p>
+  </section>
+
+  <section>
+    <h1>Sync vs Async</h1>
+    <pre><code class="javascript">// hello-bye-more-modular.js
 var hello = require('./hello');
 var bye = require('./bye');
-
-hello();
-bye();</code></pre>
+hello(); // say 'hello'
+bye(); // say 'bye'</code></pre>
     <pre><code class="javascript">// hello-bye-async.js
 var timers = require('timers');
 var hello = require('./hello');
 var bye = require('./bye');
 
-// say 'hello' on next event loop
-timers.setImmediate(hello);
-
-// say 'bye'
-bye();
+timers.setImmediate(hello); // say 'hello' immediately after
+bye(); // say 'bye'
 </code></pre>
   </section>
 
@@ -244,39 +257,38 @@ bye();
     <h1>Hello and Delayed Bye</h1>
     <p>What if we wanted to say 'hello' and delay our 'bye' for a bit?</p>
     <pre><code class="javascript">// hello-delayed-bye.js
-//-----------------------------------------------------
+
 var timers = require('timers');
 var hello = require('./hello');
 var bye = require('./bye');
 
-// say 'hello' on next event loop;
-timers.setImmediate(hello);
+timers.setImmediate(hello); // say 'hello' immediately after
 
 // delay time (in milliseconds)
 // before saying 'bye'
 timers.setTimeout(bye, 5 * 1000);</code></pre>
-    <p>Does it work? <code>node hello-delayed-bye.js</code></p>
+    <p>Hello......... bye. <code>node hello-delayed-bye.js</code></p>
   </section>
 
   <section>
     <h1>Repeated Hello</h1>
     <p>Actually, it's sad to say 'bye'. Let's keep saying 'hello'!</p>
     <pre><code class="javascript">// hello-on-repeat.js
-//-------------------------------------------------------
+
 var timers = require('timers');
 var hello = require('./hello');
 
 // repeat interval (in milliseconds)
 // to keep saying 'hello'
 timers.setInterval(hello, 1 * 1000);</code></pre>
-    <p>Hello? <code>node hello-on-repeat.js</code></p>
+    <p>Hello. Hello. Hello... <code>node hello-on-repeat.js</code></p>
   </section>
 
   <section>
     <h1>Say With An Argument</h1>
     <p>Saying 'hello' is boring now, what if we could specify what to say when we run our code?</p>
     <pre><code class="javascript">// say-arg.js
-//-------------------------------------------------------
+
 var timers = require('timers');
 var say = require('./say');
 
@@ -291,10 +303,10 @@ timers.setInterval(say(speech), 1 * 1000);</code></pre>
   <section>
     <h1>Callback Convention</h1>
     <p>
-      Most callbacks in I/O Javascript have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can alias to whatever you like when defining your callback functions).
+      Most callbacks in I/O Javascript have a conventional form, they take two arguments: <code>err</code> and <code>result</code>. (Which you can name to whatever you like when defining your callback functions).
     </p>
     <pre><code class="javascript">// read-me.js
-//-------------------------------------------------------
+
 var fs = require('fs');
 
 fs.readFile(__filename, function (err, result) {
@@ -308,13 +320,12 @@ fs.readFile(__filename, function (err, result) {
 
   <section>
     <h1>Writing a file</h1>
-    <p>So now we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
-    <pre><code class="javascript">// append-journal-txt.js
-//-------------------------------------------------------
+    <p>So now that we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
+    <pre><code class="javascript">// append-journal-txt.js -------------------------------------------
 var fs = require('fs');
 
 function appendJournal (entry, callback) {
-  // append entry to journal.txt file and pass callback
+  // append entry to journal.txt file and pass along callback
   fs.appendFile("./journal.txt", entry, callback);
 }
 
@@ -332,32 +343,33 @@ appendJournal(entry, defaultErrorHandler);</code></pre>
 
   <section>
     <h1>Writing a directory</h1>
-    <p>Having a single journal file for all entries is no good, let's name our entries and store them as separate files in a directory.</p>
-    <pre><code class="javascript">// write-journal.js
-//--------------------------------------------------------
+    <p class="small">
+      Having a single journal file for all entries is no good, let's name our entries and store them as separate files in a directory.
+    </p>
+    <pre><code class="javascript">// write-journal.js ---------------------------------------------------
 var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler')
 
 function appendJournal (name, entry, callback) {
-  // append entry to journal.txt file and pass callback
+  // append entry to respective journal file and pass along callback
   fs.appendFile("./journal/" + name, entry, callback);
 }
 
-// get name from command-line arguments
+// get name and text from command-line arguments
 var name = process.argv[1];
-// get text from command-line arguments
 var entry = process.argv[2];
 
 // append entry to journal, handling any errors
 appendJournal(name, entry, defaultErrorHandler);</code></pre>
-    <p>Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journal.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code></p>
+    <p class="small">
+      Create a journals directory with <code>mkdir journal</code>, write an entry with <code>node write-journal.js io 'today i learned i/o'</code>, list entries with <code>ls journal</code>, and read entries with <code>cat journal/*</code>
+    </p>
   </section>
 
   <section>
     <h1>Listing our journal entries</h1>
     <p>Now that we have a directory of our journal entries, let's list their names.</p>
-    <pre><code class="javascript">// list-journal.js
-//---------------------------------------------------------------
+    <pre><code class="javascript">// list-journal.js -----------------------------------------------
 var fs = require('fs');
 var defaultErrorHandler = require('./default-error-handler');
 
@@ -379,6 +391,13 @@ getEntryNames(function (err, entryNames));
     <h1>Advanced Callback Magic</h1>
     <p>
       The top-to-bottom order that you declare callbacks doesn't matter, only the logical/hierarchical nesting of them. First split code up into functions, then use callbacks to declare if one function depends on another function finishing.
+    </p>
+  </section>
+
+  <section>
+    <h1>Event Loop Magic</h1>
+    <p>
+      When an async function is run, the associated callback is registered on the "event loop". Inside io.js there is a list of things that have been run but haven't reported back yet, so io.js loops over the list again and again checking if they are finished. After they finish any callbacks that depended on them finishing will be run.
     </p>
   </section>
 
@@ -425,6 +444,23 @@ getEntryNames(function (err, entryNames));
       Asynchronous javascript, or javascript that uses callbacks, is hard to get right intuitively. A lot of code ends up looking messy, with nested callbacks indenting on forever. If you notice this, <a href="http://callbackhell.com">here's a guide to help</a>. :)
     </p>
   </section>
+
+  <section>
+    <h1>Go Forth and Magic</h1>
+    <img src="images/follow_your_dreams.png" height="200" width="388" />
+    <blockquote>
+      It does not matter how or frivolous a project seems: everything you do adds to
+      your body of work.
+      <br />
+      <br />
+      I can’t stress this enough: you are not just creating a bunch of small things.
+      You are creating an ecosystem of projects.
+      <br />
+      <br />
+      - <a href="http://tinysubversions.com/2014/05/thoughts-on-small-projects/">"Thoughts on small projects"</a>
+    </blockquote>
+  </section>
+
 
   <section>
     <h1>IN PROGRESS</h1>

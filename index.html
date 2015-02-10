@@ -39,7 +39,18 @@
   <section>
     <h1>Pre-Requisites</h1>
     <p>
-      To begin, you need to <a href="/guides/install-js">install Javascript on your machine</a>.
+      To begin, you need
+      <ul>
+        <li>
+          <a href="/#unix">Basic skills in Unix</a>
+        </li>
+        <li>
+          <a href="/#javascript">Basic skills in Javascript</a>
+        </li>
+        <li>
+          <a href="/guides/install-js">Javascript on your machine</a>
+        </li>
+      </ul>
     </p>
   </section>
 
@@ -360,7 +371,7 @@ function afterReadFile (name) {
 }
 
 filenames.forEach(function (filename) {
-  fs.readFile(filename[0], afterReadFile(filename));
+  fs.readFile(filename, afterReadFile(filename));
 });</code></pre>
   </section>
 
@@ -381,7 +392,9 @@ filenames.forEach(function (filename) {
     <img src="images/follow_your_dreams.png" height="200" width="388" />
   </section>
 
-<!--
+</article>
+
+<div>
   <section>
     <h1>Writing a file</h1>
     <p>So now that we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
@@ -741,7 +754,7 @@ journalNames.forEach(function (name) {
 
 -->
 
-</article>
+</div>
 <!--
 sync get list of logos and count size
 

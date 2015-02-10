@@ -379,6 +379,13 @@ getEntryNames(function (err, entryNames));
   </section>
 
   <section>
+    <h1>Event Loop Magic</h1>
+    <p>
+      When an async function is run, the associated callback is registered on the "event loop". Inside io.js there is a list of things that have been run but haven't reported back yet, so io.js loops over the list again and again checking if they are finished. After they finish any callbacks that depended on them finishing will be run.
+    </p>
+  </section>
+
+  <section>
     <h1>Count length of journals</h1>
     <p>Sweet, we have the names of the journal entries, now let's count how long the entries are (by number of characters).</p>
     <pre><code class="javascript">// count-journal.js

@@ -376,6 +376,257 @@ filenames.forEach(function (filename) {
     <img src="images/follow_your_dreams.png" height="200" width="388" />
   </section>
 
+  <section>
+    <h1>Hello Server</h1>
+    <pre><code class="javascript">// hello-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  req.end("hello world!");
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node hello-echo.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>HTTP Magic</h1>
+    <h2>Request In, Response Out.</h2>
+    <p>
+      Craft your HTTP requests and display the responses using your web browser, <code>curl</code>, <code>wget</code>, or even <code>netcat</code>.
+    </p>
+  </section>
+
+  <section>
+    <h1>Random Cat Face</h1>
+    <p><code>npm install cat-ascii-faces</code></p>
+    <pre><code class="javascript">// cat-face.js
+
+var http = require('http'); // built-in module
+var catFaces = require('cat-ascii-faces'); // npmjs.org module
+
+function handler (req, res) {
+  res.end(catFaces());
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node cat-face.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Random Cat API</h1>
+    <p><code>npm install cat-names</code>
+    <pre><code class="javascript">// cat-api.js
+
+var http = require('http'); // built-in module
+var catFaces = require('cat-ascii-faces'); // npmjs.org module
+var catNames = require('cat-names'); // npmjs.org module
+
+function handler (req, res) {
+  res.end(JSON.stringify({
+    face: catFaces(),
+    name: catNames(),
+  }, null, 2));
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+    <p>Start with <code>node cat-api.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Random Cat Images</h1>
+    <p><code>npm install request</code>
+    <pre><code class="javascript">// cat-images.js
+
+// we want to write a module that
+// fetches a url to a random cat image
+// and returns it via a callback
+var request = require('request'); // npmjs.org module
+
+function catImages (callback) {
+  var url = "http://random.cat/meow";
+  request(url, function (err, res, body) {
+    callback(err, body);
+  });
+}
+
+module.exports = catImages;</code></pre>
+    <p>Start with <code>node cat-face.js</code>.</p>
+  </section>
+
+  <section>
+    <pre><code class="javascript">// cat-api.js
+
+var http = require('http'); // built-in module
+var catFaces = require('cat-ascii-faces'); // npmjs.org module
+var catNames = require('cat-names'); // npmjs.org module
+var catImages = require('./cat-images'); // our shiny module
+
+function handler (req, res) {
+  catImages(function (err, catImage) {
+    res.end(JSON.stringify({
+      face: catFaces(),
+      name: catNames(),
+      image: catImage,
+    }, null, 2));
+  }));
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+    <p>Start with <code>node cat-api.js</code>.</p>
+  </section>
+
+  <!--
+    Random cat: 
+      - random cat face with 'cat-ascii-faces'
+      - json object with face and name ('cat-names')
+      - json object with face, name, and image ('request' to http://random.cat/meow)
+      - move random cats to /meow
+      - add index.html at /
+      - add browserify bundle.js
+      - display cats, add button, get button events, add cat on click
+
+    Random game:
+      Generate random number from 0 to 9
+      Use query params to manipulate settings
+      Take in input through body
+
+    Powerup:
+      increments power after 10 seconds
+      says "already powering up" if you try to powerup while powering up
+
+    Crawler scanning pages looking for key phrase, recursively follows links breadth-first
+  </section>
+  -->
+
+  <section>
+    <h1>Messaging Magic</h1>
+    <p>Messages in cyberspace are very similar to messages in meatspace.</p>
+    <p>Messages have headers that describe meta-data about the message, then a body with the contents of the message.</p>
+  </section>
+
+  <section>
+    <h1>HTTP Request Crafting</h1>
+    <pre><code class="text">GET /path/to/thing HTTP/1.1
+Host: localhost:5000
+User-Agent: dinosaur.is
+X-Is-Magic: true
+Content-Length: 15
+
+here's some data
+
+</code></pre>
+    <p>Try connecting to one of our servers with <code>ncat localhost 5000</code> and pasting the above.</p>
+  </section>
+
+  <section>
+    <h1>Inspection Server</h1>
+    <pre><code class="javascript">// inspect-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  res.write("method: " + req.method + "\n");
+  res.write("url: " + req.url + "\n");
+  res.write("httpVersion: " + req.httpVersion + "\n");
+
+  res.write("headers:\n");
+  Object.keys(req.headers).forEach(function (name) {
+    res.write("  " + name + ": " + req.headers[name] + "\n");
+  });
+
+  res.write("data: ");
+  req.setEncoding('utf8');
+  req.on('data', function (chunk) {
+    res.write(chunk);
+  });
+  req.on('end', function () {
+    res.end();
+  });
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node inspect-server.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Echo Server</h1>
+    <pre><code class="javascript">// echo-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+    req.pipe(res);
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node server-echo.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Echo Client</h1>
+    <pre><code class="javascript">// echo-client.js
+
+var http = require('http'); // built-in module
+
+var path = "http://localhost/";
+
+function handler (res) {
+  var req = http.get(path, handler);
+  res.pipe(req);
+}
+
+http.get(path, handler);</code></pre>
+
+  </section>
+
+  <section>
+    <h1>Static Server</h1>
+    <pre><code class="javascript">// static.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  fs.readFile("." + req.url, function (err, contents) {
+    res.write(contents);
+    res.end();
+  });
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+  </section>
+
+<!--
+sync get list of logos and count size
+
+async get list of logos and count size
+
+stream get list of logos and count size
+
+sync serve random logo
+
+async serve random logo
+
+stream serve random logo
+
+multiple async requests for random logos
+
+serve after a variable length setTimeout event
+
+repeat multiple async requests for random logos
+-->
+
 </article>
 
 <div>
@@ -736,25 +987,47 @@ journalNames.forEach(function (name) {
 </code></pre>
   </section>
 
--->
+  <section>
+    <h1>Sources</h1>
+    <ul>
+      <li>
+        <a href="https://github.com/maxogden/art-of-node#the-art-of-node">
+          maxogden's The Art of Node
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/cyberwizardinstitute/workshops/blob/master/node_101.md">
+          Cyber Wizard Institute's Intro to Node.js
+        </a>
+      </li>
+    </ul>
+  </section>
 
 </div>
+
 <!--
-sync get list of logos and count size
 
-async get list of logos and count size
+# art of the stack
 
-stream get list of logos and count size
+## db
 
-sync serve random logo
+level
 
-async serve random logo
+get registry on level with
+  - level-couch-sync
+  - GET http://isaacs.iriscouch.com/registry/_all_docs?include_docs=true
+  - show streams by parsing with jsonstream instead of JSON.parse
 
-stream serve random logo
+use level to teach big O complexity
+  - naive scan of all data
+  - generate more data (indexes) to reduce amount to scan
 
-multiple async requests for random logos
+## api
 
-serve after a variable length setTimeout event
+feathers
 
-repeat multiple async requests for random logos
+## ui
+
+react
+
 -->

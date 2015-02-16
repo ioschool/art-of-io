@@ -481,6 +481,157 @@ http.createServer(handler).listen(5000);</code></pre>
     <p>Start with <code>node cat-api.js</code>.</p>
   </section>
 
+  <section>
+    <p>Let's export our Cat API as a module, running the server if called directly.</p>
+    <pre><code class="javascript">// cat-api.js
+
+// ...
+
+module.exports = handler;
+
+if (!module.parent) {
+  http.createServer(handler).listen(5000); 
+}</code></pre>
+    <p>Start with <code>node cat-api.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Cat Server</h1>
+    <p>Now let's write a higher-level handler that uses our <code>./cat-api</code> handler when we request '/meow'.</p>
+    <pre><code class="javascript">// cat-server.js
+
+// ...
+
+var http = require('http');
+var catApi = require('./cat-api');
+
+function handler (req, res) {
+  if (req.url === "/meow") {
+    catApi(req, res);
+  } else {
+    res.writeHead(404, 'not found');
+  }
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+  </section>
+
+  <section>
+    <h1>Cat HTML</h1>
+    <p>Now let's use our cat server to serve some HTML.</p>
+    <pre><code class="javascript">// cat-server.js
+
+var http = require('http');
+var fs = require('fs');
+var catApi = require('./cat-api');
+
+function handler (req, res) {
+  if (req.url === "/meow") {
+    catApi(req, res);
+  } else if (req.url === "/") {
+    fs.createReadStream("./cat-index.html").pipe(res);
+  } else {
+    res.writeHead(404, 'not found');
+  }
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+  </section>
+
+  <section>
+    <h1>Cat HTML</h1>
+    <p>Now let's write that HTML.</p>
+    <pre><code class="html">&lt;!-- cat-index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;(=^.^=)&lt;/title&gt;
+    &lt;link href=&quot;./styles.css&quot; rel=&quot;stylesheet&quot; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;h1&gt;Meow :3&lt;/h1&gt;
+    &lt;/main&gt;
+    &lt;script src=&quot;./scripts.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<!-- cat-index.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>(=^.^=)</title>
+    <link href="./styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main>
+      <h1>Meow :3</h1>
+    </main>
+    <script src="./scripts.js"></script>
+  </body>
+</html>
+-->
+  </section>
+
+  <section>
+    <h1>Styles</h1>
+    <p>Let's serve up some './styles.css'</p>
+    <pre><code class="javascript">// cat-server.js
+// ...
+function handler (req, res) {
+// ...
+  } else if (req.url === "/styles.css") {
+    fs.createReadStream("./cat-styles.css").pipe(res);
+  } else {
+// ...
+</code></pre>
+    <pre><code class="css">; cat-styles.css
+h1 {
+  font-size: 100px;
+  text-align: center;
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Scripts</h1>
+    <p>Let's serve up some './scripts.js'</p>
+    <pre><code class="javascript">// cat-server.js
+// ...
+function handler (req, res) {
+// ...
+  } else if (req.url === "/scripts.js") {
+    fs.createReadStream("./cat-scripts.js").pipe(res);
+  } else {
+// ...
+</code></pre>
+    <pre><code class="javascript">// cat-scripts.js
+
+console.log("eomay");</code></pre>
+  </section>
+
+  <section>
+    <h1><a href="http://browserify.org/">Browserify</a> Magic</h1>
+    <p>
+      <a href="http://browserify.org/">browserify</a> lets you require('modules') in the browser by walking through and bundling up all your code.
+    </p>
+    <p><code>npm install browserify</code></p>
+    <pre><code class="javascript">// cat-server.js
+// ...
+var browserify = require('browserify');
+// ...
+function handler (req, res) {
+// ...
+  } else if (req.url === "/scripts.js") {
+    browserify("./cat-scripts.js").bundle().pipe(res);
+  } else {
+// ...
+</code></pre>
+    <pre><code class="javascript">// cat-scripts.js
+
+var catFaces = require('cat-ascii-faces');
+
+console.log("eomay", catFaces());</code></pre>
+  </section>
+
   <!--
     Random cat: 
       - random cat face with 'cat-ascii-faces'

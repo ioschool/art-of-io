@@ -1,0 +1,525 @@
+---
+url: http://ioschool.is/art-of-io/sessions/1
+title: "The Art of I/O"
+site_name: ioschool.is
+description: A magical introduction to input and output signals.
+image: ../images/cyberwizard_mad_science.svg
+type: article
+template: index.swig
+stylesheets:
+  - "../bundle.css"
+scripts:
+  - "../bundle.js"
+---
+<article class="presentation">
+
+  <section>
+    <h1>The Art of I/O (2/3)</h1>
+    <h2>A magical introduction to input and output signals</h2>
+    <img src="../images/mad_science_wizard.svg" />
+    <h3>
+      <a href="/0">First Session</a>
+      |
+      <a href="http://ioschool.is">http://ioschool.is</a>
+      |
+      <a href="/2">Next Session</a>
+    </h3>
+  </section>
+
+  <section>
+    <h1>Course Recap</h1>
+    <p>In our last session, we touched on
+      <ul>
+        <li>functions</li>
+        <li>closures (functions that 'close over' variables)</li>
+        <li>callbacks (functions that are 'called back' later)</li>
+        <li>modules</li>
+      </ul>
+    </p>
+    <p>
+      In this session, we'll dive deeper into the above and touch on
+      <ul>
+        <li>events</li>
+        <li>streams</li>
+      </ul>
+    </p>
+    <p>We'll culminate with a fun cat app.</p>
+  </section>
+
+  <section>
+    <h1>Hello Server</h1>
+    <pre><code class="javascript">// hello-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  req.end("hello world!");
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node hello-echo.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>HTTP Magic</h1>
+    <h2>Request In, Response Out.</h2>
+    <p>
+      Craft your HTTP requests and display the responses using your web browser, <code>curl</code>, <code>wget</code>, or even <code>netcat</code>.
+    </p>
+  </section>
+
+  <section>
+    <h1>Random Cat Face</h1>
+    <p><code>npm install cat-ascii-faces</code></p>
+    <pre><code class="javascript">// cat-face.js
+
+var http = require('http'); // built-in module
+var catFaces = require('cat-ascii-faces'); // npmjs.org module
+
+function handler (req, res) {
+  res.end(catFaces());
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node cat-face.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Random Cat API</h1>
+    <p><code>npm install cat-names</code>
+    <pre><code class="javascript">// cat-api.js
+
+var http = require('http'); // built-in module
+var catFaces = require('cat-ascii-faces'); // npmjs.org module
+var catNames = require('cat-names'); // npmjs.org module
+
+function handler (req, res) {
+  res.end(JSON.stringify({
+    face: catFaces(),
+    name: catNames(),
+  }, null, 2));
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+    <p>Start with <code>node cat-api.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Random Cat Images</h1>
+    <p><code>npm install request</code>
+    <pre><code class="javascript">// cat-images.js
+
+// we want to write a module that
+// fetches a url to a random cat image
+// and returns it via a callback
+var request = require('request'); // npmjs.org module
+
+function catImages (callback) {
+  var url = "http://random.cat/meow";
+  request(url, function (err, res) {
+    callback(err, res.body);
+  });
+}
+
+module.exports = catImages;</code></pre>
+    <p>Start with <code>node cat-face.js</code>.</p>
+  </section>
+
+  <section>
+    <pre><code class="javascript">// cat-api.js
+
+var http = require('http'); // built-in module
+var catFaces = require('cat-ascii-faces'); // npmjs.org module
+var catNames = require('cat-names'); // npmjs.org module
+var catImages = require('./cat-images'); // our shiny module
+
+function handler (req, res) {
+  catImages(function (err, catImage) {
+    res.end(JSON.stringify({
+      face: catFaces(),
+      name: catNames(),
+      image: catImage,
+    }, null, 2));
+  }));
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+    <p>Start with <code>node cat-api.js</code>.</p>
+  </section>
+
+  <section>
+    <p>Let's export our Cat API as a module, running the server if called directly.</p>
+    <pre><code class="javascript">// cat-api.js
+
+// ...
+
+module.exports = handler;
+
+if (!module.parent) {
+  http.createServer(handler).listen(5000); 
+}</code></pre>
+    <p>Start with <code>node cat-api.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Cat Server</h1>
+    <p>Now let's write a higher-level handler that uses our <code>./cat-api</code> handler when we request '/meow'.</p>
+    <pre><code class="javascript">// cat-server.js
+
+// ...
+
+var http = require('http');
+var catApi = require('./cat-api');
+
+function handler (req, res) {
+  if (req.url === "/meow") {
+    catApi(req, res);
+  } else {
+    res.writeHead(404, 'not found');
+    res.end();
+  }
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+  </section>
+
+  <section>
+    <h1>Cat HTML</h1>
+    <p>Now let's use our cat server to serve some HTML.</p>
+    <pre><code class="javascript">// cat-server.js
+
+var http = require('http');
+var fs = require('fs');
+var catApi = require('./cat-api');
+
+function handler (req, res) {
+  if (req.url === "/meow") {
+    catApi(req, res);
+  } else if (req.url === "/") {
+    fs.createReadStream("./cat-index.html").pipe(res);
+  } else {
+    res.writeHead(404, 'not found');
+  }
+}
+
+http.createServer(handler).listen(5000);</code></pre>
+  </section>
+
+  <section>
+    <h1>Cat HTML</h1>
+    <p>Now let's write that HTML.</p>
+    <pre><code class="html">&lt;!-- cat-index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;(=^.^=)&lt;/title&gt;
+    &lt;link href=&quot;./styles.css&quot; rel=&quot;stylesheet&quot; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;main&gt;
+      &lt;h1&gt;Meow :3&lt;/h1&gt;
+    &lt;/main&gt;
+    &lt;script src=&quot;./scripts.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<!-- cat-index.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>(=^.^=)</title>
+    <link href="./styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main>
+      <h1>Meow :3</h1>
+    </main>
+    <script src="./scripts.js"></script>
+  </body>
+</html>
+-->
+  </section>
+
+  <section>
+    <h1>Styles</h1>
+    <p>Let's serve up some './styles.css'</p>
+    <pre><code class="javascript">// cat-server.js
+// ...
+function handler (req, res) {
+// ...
+  } else if (req.url === "/styles.css") {
+    fs.createReadStream("./cat-styles.css").pipe(res);
+  } else {
+// ...
+</code></pre>
+    <pre><code class="css">; cat-styles.css
+h1 {
+  font-size: 100px;
+  text-align: center;
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Scripts</h1>
+    <p>Let's serve up some './scripts.js'</p>
+    <pre><code class="javascript">// cat-server.js
+// ...
+function handler (req, res) {
+// ...
+  } else if (req.url === "/scripts.js") {
+    fs.createReadStream("./cat-scripts.js").pipe(res);
+  } else {
+// ...
+</code></pre>
+    <pre><code class="javascript">// cat-scripts.js
+
+console.log("eomay");</code></pre>
+  </section>
+
+  <section>
+    <h1><a href="http://browserify.org/">Browserify</a> Magic</h1>
+    <p>
+      <a href="http://browserify.org/">browserify</a> lets you require('modules') in the browser.
+    </p>
+    <p><code>npm install browserify</code></p>
+    <pre><code class="javascript">// cat-server.js
+// ...
+var browserify = require('browserify');
+// ...
+function handler (req, res) {
+// ...
+  } else if (req.url === "/scripts.js") {
+    browserify("./cat-scripts.js").bundle().pipe(res);
+  } else {
+// ...
+</code></pre>
+    <pre><code class="javascript">// cat-scripts.js
+
+console.log(require('cat-ascii-faces')());</code></pre>
+  </section>
+
+  <section>
+    <h1>Request a cat in the browser!</h1>
+    <p><code>npm install xhr</code></p>
+    <pre><code class="javascript">// cat-scripts.js
+
+var xhr = require('xhr');
+
+function getCat (callback) {
+  xhr("/meow", function (err, res) {
+    callback(err, res.body);
+  });
+}
+
+getCat(function (err, cat) {
+  if (!err) console.log(cat);
+});</code></pre>
+  </section>
+
+  <section>
+    <h1>Display the cat in the browser!</h1>
+    <p><code>npm install domquery</code></p>
+    <pre><code class="javascript">// cat-scripts.js
+
+var xhr = require('xhr');
+var dom = require('domquery');
+
+function addCat (cat) {
+  var catView = 
+    "<div class='cat'>" +
+      "<h2>{ face }</h2>" +
+      "<h3>{ name }</h3>" +
+      "<img src='{ image }'/>" +
+    "</div>"
+
+  dom('main').add(catView, cat)
+}
+
+// ...
+
+getCat(function (err, cat) {
+  if (!err) addCat(res.body)
+});</code></pre>
+  </section>
+
+  <!--
+    Random cat: 
+      - random cat face with 'cat-ascii-faces'
+      - json object with face and name ('cat-names')
+      - json object with face, name, and image ('request' to http://random.cat/meow)
+      - move random cats to /meow
+      - add index.html at /
+      - add browserify bundle.js
+      - display cat
+      - add button, get button events
+      - add cat on click
+
+    Random game:
+      Generate random number from 0 to 9
+      Use query params to manipulate settings
+      Take in input through body
+
+    Powerup:
+      increments power after 10 seconds
+      says "already powering up" if you try to powerup while powering up
+
+    Crawler scanning pages looking for key phrase, recursively follows links breadth-first
+  </section>
+  -->
+
+  <section>
+    <h1>Follow Your Dreams</h1>
+    <img src="images/follow_your_dreams.png" height="200" width="388" />
+    <blockquote>
+      It does not matter how or frivolous a project seems: everything you do adds to
+      your body of work.
+      <br />
+      <br />
+      I can’t stress this enough: you are not just creating a bunch of small things.
+      You are creating an ecosystem of projects.
+      <br />
+      <br />
+      - <a href="http://tinysubversions.com/2014/05/thoughts-on-small-projects/">"Thoughts on small projects"</a>
+    </blockquote>
+  </section>
+
+</article>
+
+<div>
+  <section>
+    <h1>More Advanced Magic</h1>
+    <h2>
+      go on if you dare.
+    </h2>
+    <p>
+      the rest of the slides did not fit within the presentation, but they are still available as notes. 
+    </p>
+  </section>
+
+  <!-- unused session 2 content -->
+
+  <section>
+    <h1>Messaging Magic</h1>
+    <p>Messages in cyberspace are very similar to messages in meatspace.</p>
+    <p>Messages have headers that describe meta-data about the message, then a body with the contents of the message.</p>
+  </section>
+
+  <section>
+    <h1>HTTP Request Crafting</h1>
+    <pre><code class="text">GET /path/to/thing HTTP/1.1
+Host: localhost:5000
+User-Agent: dinosaur.is
+X-Is-Magic: true
+Content-Length: 15
+
+here's some data
+
+</code></pre>
+    <p>Try connecting to one of our servers with <code>ncat localhost 5000</code> and pasting the above.</p>
+  </section>
+
+  <section>
+    <h1>Inspection Server</h1>
+    <pre><code class="javascript">// inspect-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  res.write("method: " + req.method + "\n");
+  res.write("url: " + req.url + "\n");
+  res.write("httpVersion: " + req.httpVersion + "\n");
+
+  res.write("headers:\n");
+  Object.keys(req.headers).forEach(function (name) {
+    res.write("  " + name + ": " + req.headers[name] + "\n");
+  });
+
+  res.write("data: ");
+  req.setEncoding('utf8');
+  req.on('data', function (chunk) {
+    res.write(chunk);
+  });
+  req.on('end', function () {
+    res.end();
+  });
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node inspect-server.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Echo Server</h1>
+    <pre><code class="javascript">// echo-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+    req.pipe(res);
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node server-echo.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Echo Client</h1>
+    <pre><code class="javascript">// echo-client.js
+
+var http = require('http'); // built-in module
+
+var path = "http://localhost/";
+
+function handler (res) {
+  var req = http.get(path, handler);
+  res.pipe(req);
+}
+
+http.get(path, handler);</code></pre>
+
+  </section>
+
+  <section>
+    <h1>Static Server</h1>
+    <pre><code class="javascript">// static.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  fs.readFile("." + req.url, function (err, contents) {
+    res.write(contents);
+    res.end();
+  });
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+  </section>
+
+  <!-- /unused session 2 content -->
+
+  <section>
+    <h1>Sources</h1>
+    <ul>
+      <li>
+        <a href="https://github.com/maxogden/art-of-node#the-art-of-node">
+          maxogden's The Art of Node
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/cyberwizardinstitute/workshops/blob/master/node_101.md">
+          Cyber Wizard Institute's Intro to Node.js
+        </a>
+      </li>
+    </ul>
+  </section>
+
+</div>

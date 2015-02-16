@@ -377,6 +377,11 @@ filenames.forEach(function (filename) {
   </section>
 
   <section>
+    <h1>Course Recap</h1>
+    <p>In our last session, we touched on Javascript I/O through learning functions, closures (functions that 'close over' variables), callbacks (functions that are 'called back' later), and modules. In this session, we'll use what we've learned to dive deeper into Javascript witchcraft and wizardry (the above plus events and streams), culminating in a fun cat app.</p>
+  </section>
+
+  <section>
     <h1>Hello Server</h1>
     <pre><code class="javascript">// hello-server.js
 
@@ -510,6 +515,7 @@ function handler (req, res) {
     catApi(req, res);
   } else {
     res.writeHead(404, 'not found');
+    res.end();
   }
 }
 
@@ -632,29 +638,6 @@ var catFaces = require('cat-ascii-faces');
 console.log("eomay", catFaces());</code></pre>
   </section>
 
-  <!--
-    Random cat: 
-      - random cat face with 'cat-ascii-faces'
-      - json object with face and name ('cat-names')
-      - json object with face, name, and image ('request' to http://random.cat/meow)
-      - move random cats to /meow
-      - add index.html at /
-      - add browserify bundle.js
-      - display cats, add button, get button events, add cat on click
-
-    Random game:
-      Generate random number from 0 to 9
-      Use query params to manipulate settings
-      Take in input through body
-
-    Powerup:
-      increments power after 10 seconds
-      says "already powering up" if you try to powerup while powering up
-
-    Crawler scanning pages looking for key phrase, recursively follows links breadth-first
-  </section>
-  -->
-
   <section>
     <h1>Messaging Magic</h1>
     <p>Messages in cyberspace are very similar to messages in meatspace.</p>
@@ -708,56 +691,43 @@ server.listen(5000);</code></pre>
   </section>
 
   <section>
-    <h1>Echo Server</h1>
-    <pre><code class="javascript">// echo-server.js
-
-var http = require('http'); // built-in module
-
-function handler (req, res) {
-    req.pipe(res);
-}
-
-var server = http.createServer(handler);
-
-server.listen(5000);</code></pre>
-    <p>Start with <code>node server-echo.js</code>.</p>
+    <h1>Follow Your Dreams</h1>
+    <img src="images/follow_your_dreams.png" height="200" width="388" />
+    <blockquote>
+      It does not matter how or frivolous a project seems: everything you do adds to
+      your body of work.
+      <br />
+      <br />
+      I can’t stress this enough: you are not just creating a bunch of small things.
+      You are creating an ecosystem of projects.
+      <br />
+      <br />
+      - <a href="http://tinysubversions.com/2014/05/thoughts-on-small-projects/">"Thoughts on small projects"</a>
+    </blockquote>
   </section>
 
-  <section>
-    <h1>Echo Client</h1>
-    <pre><code class="javascript">// echo-client.js
+  <!--
+    Random cat: 
+      - random cat face with 'cat-ascii-faces'
+      - json object with face and name ('cat-names')
+      - json object with face, name, and image ('request' to http://random.cat/meow)
+      - move random cats to /meow
+      - add index.html at /
+      - add browserify bundle.js
+      - display cats, add button, get button events, add cat on click
 
-var http = require('http'); // built-in module
+    Random game:
+      Generate random number from 0 to 9
+      Use query params to manipulate settings
+      Take in input through body
 
-var path = "http://localhost/";
+    Powerup:
+      increments power after 10 seconds
+      says "already powering up" if you try to powerup while powering up
 
-function handler (res) {
-  var req = http.get(path, handler);
-  res.pipe(req);
-}
-
-http.get(path, handler);</code></pre>
-
+    Crawler scanning pages looking for key phrase, recursively follows links breadth-first
   </section>
-
-  <section>
-    <h1>Static Server</h1>
-    <pre><code class="javascript">// static.js
-
-var http = require('http'); // built-in module
-
-function handler (req, res) {
-  fs.readFile("." + req.url, function (err, contents) {
-    res.write(contents);
-    res.end();
-  });
-}
-
-var server = http.createServer(handler);
-
-server.listen(5000);</code></pre>
-  </section>
-
+  -->
 <!--
 sync get list of logos and count size
 
@@ -781,6 +751,15 @@ repeat multiple async requests for random logos
 </article>
 
 <div>
+  <section>
+    <h1>IN PROGRESS</h1>
+    <h2>
+      the rest of the slides did not end up being used. go on if you dare.
+    </h2>
+  </section>
+
+  <!-- unused session 1 content -->
+
   <section>
     <h1>Writing a file</h1>
     <p>So now that we can say what we want, let's write what we say into a <code>journal.txt</code> file.</p>
@@ -895,28 +874,6 @@ function countEntry (entryName, callback) {
     </p>
   </section>
 
-  <section>
-    <h1>Follow Your Dreams</h1>
-    <img src="images/follow_your_dreams.png" height="200" width="388" />
-    <blockquote>
-      It does not matter how or frivolous a project seems: everything you do adds to
-      your body of work.
-      <br />
-      <br />
-      I can’t stress this enough: you are not just creating a bunch of small things.
-      You are creating an ecosystem of projects.
-      <br />
-      <br />
-      - <a href="http://tinysubversions.com/2014/05/thoughts-on-small-projects/">"Thoughts on small projects"</a>
-    </blockquote>
-  </section>
-
-  <section>
-    <h1>IN PROGRESS</h1>
-    <h2>
-      the rest of the slides are a work in progress. go on if you dare.
-    </h2>
-  </section>
 
   <section>
     <h1>Speak Art</h1>
@@ -1137,6 +1094,62 @@ journalNames.forEach(function (name) {
 });
 </code></pre>
   </section>
+
+  <!-- /unused session 1 content -->
+
+  <!-- unused session 2 content -->
+  <section>
+    <h1>Echo Server</h1>
+    <pre><code class="javascript">// echo-server.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+    req.pipe(res);
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+    <p>Start with <code>node server-echo.js</code>.</p>
+  </section>
+
+  <section>
+    <h1>Echo Client</h1>
+    <pre><code class="javascript">// echo-client.js
+
+var http = require('http'); // built-in module
+
+var path = "http://localhost/";
+
+function handler (res) {
+  var req = http.get(path, handler);
+  res.pipe(req);
+}
+
+http.get(path, handler);</code></pre>
+
+  </section>
+
+  <section>
+    <h1>Static Server</h1>
+    <pre><code class="javascript">// static.js
+
+var http = require('http'); // built-in module
+
+function handler (req, res) {
+  fs.readFile("." + req.url, function (err, contents) {
+    res.write(contents);
+    res.end();
+  });
+}
+
+var server = http.createServer(handler);
+
+server.listen(5000);</code></pre>
+  </section>
+
+  <!-- /unused session 2 content -->
 
   <section>
     <h1>Sources</h1>

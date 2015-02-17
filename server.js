@@ -7,4 +7,4 @@ app.use(require('ecstatic')({
   showDir: false,
 }));
 
-app.listen(5000);
+app.listen(3000);

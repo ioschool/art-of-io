@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta property="og:title" content="The Art of I/O" />
-    <meta property="og:site_name" content="ahdinosaur" />
-    <meta property="og:url" content="http://ioschool.is/art-of-io" />
+    <meta property="og:site_name" content="ioschool.is" />
+    <meta property="og:url" content="http://ioschool.is/art-of-io/sessions/2" />
     <meta property="og:description" content="A magical introduction to input and output signals." />
-    <meta property="og:image" content="http://ioschool.is/art-of-io/images/cyberwizard_mad_science.svg" />
+    <meta property="og:image" content="http://ioschool.is/art-of-io/sessions/2/../images/cyberwizard_mad_science.svg" />
     <meta property="og:type" content="article" />
     <meta property="fb:profile_id" content="" />
     <meta property="article:publisher" content="" />
@@ -16,7 +16,7 @@
     <title>The Art of I/O</title>
 
     
-    <link rel="stylesheet" type="text/css" href="./bundle.css" />
+    <link rel="stylesheet" type="text/css" href="../bundle.css" />
     
 
   </head>
@@ -30,29 +30,55 @@
       <article class="presentation">
 
   <section>
-    <h1>The Art of I/O</h1>
+    <h1>The Art of I/O (3/3)</h1>
     <h2>A magical introduction to input and output signals</h2>
-    <img src="images/mad_science_wizard.svg" />
+    <img src="../images/mad_science_wizard.svg" />
     <h3>
-      <a href="./sessions/0" data-query=".">First Session</a>
+      <a href="./0" data-query=".">First Session</a>
       |
-      <a href="./sessions/1" data-query=".">Second Session</a>
+      <a href="./1" data-query=".">Previous Session</a>
       |
-      <a href="./sessions/2" data-query=".">Third Session</a>
+      <a href="../" data-query=".">Course Home</a>
       |
-      <a href="./" data-query="{ notes: !notes }">Toggle Notes Mode</a>
+      <a href="./2" data-query="{ notes: !notes }">Toggle Notes Mode</a>
       |
-      <a href="http://ioschool.is">http://ioschool.is</a></h3>
+      <a href="http://ioschool.is">http://ioschool.is</a>
     </h3>
   </section>
 
 </article>
+<!--
+
+# art of the stack
+
+## db
+
+level
+
+get registry on level with
+  - level-couch-sync
+  - GET http://isaacs.iriscouch.com/registry/_all_docs?include_docs=true
+  - show streams by parsing with jsonstream instead of JSON.parse
+
+use level to teach big O complexity
+  - naive scan of all data
+  - generate more data (indexes) to reduce amount to scan
+
+## api
+
+feathers
+
+## ui
+
+react
+
+-->
 
       
     </main>
 
     
-    <script type="text/javascript" src="./bundle.js"></script>
+    <script type="text/javascript" src="../bundle.js"></script>
     
 
     <!-- Piwik -->

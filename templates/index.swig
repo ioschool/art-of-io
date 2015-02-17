@@ -21,8 +21,8 @@
 
   </head>
   <body>
-    <a class='fork-me' href='http://github.com/ioschool/art-of-io'>
-      Fork me on GitHub
+    <a class='fork-me btn btn-default' href='http://github.com/ioschool/art-of-io'>
+      View Source
     </a>
 
     <main>

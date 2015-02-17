@@ -265,9 +265,11 @@ function handler (req, res) {
 // ...
 </code></pre>
     <pre><code class="css"> cat-styles.css
+main {
+  text-align: center;
+}
 h1 {
-  font-size: 100px
-  text-align: center
+  font-size: 100px;
 }</code></pre>
   </section>
 
@@ -319,7 +321,7 @@ var xhr = require('xhr')
 
 function getCat (callback) {
   xhr("/meow", function (err, res) {
-    callback(err, res.body)
+    callback(err, JSON.parse(res.body))
   })
 }
 
@@ -329,7 +331,7 @@ getCat(function (err, cat) {
   </section>
 
   <section>
-    <h1>Display the cat in the browser!</h1>
+    <h1>Display a cat in the browser!</h1>
     <p><code>npm install domquery</code></p>
     <pre><code class="javascript">// cat-scripts.js -------------------------
 // ...
@@ -338,15 +340,15 @@ var dom = require('domquery')
 function addCat (cat) {
   var catView = 
     &quot;&lt;div class=&#39;cat&#39;&gt;&quot; +
-      &quot;&lt;h2&gt;{ face }&lt;/h2&gt;&quot; +
-      &quot;&lt;h3&gt;{ name }&lt;/h3&gt;&quot; +
-      &quot;&lt;img src=&#39;{ image }&#39;/&gt;&quot; +
+      &quot;&lt;h2&gt;{face}&lt;/h2&gt;&quot; +
+      &quot;&lt;h3&gt;{name}&lt;/h3&gt;&quot; +
+      &quot;&lt;img src=&#39;{image}&#39;/&gt;&quot; +
     &quot;&lt;/div&gt;&quot;
 <!--
     "<div class='cat'>" +
-      "<h2>{ face }</h2>" +
-      "<h3>{ name }</h3>" +
-      "<img src='{ image }'/>" +
+      "<h2>{face}</h2>" +
+      "<h3>{name}</h3>" +
+      "<img src='{image}'/>" +
     "</div>"
 -->
   dom('.cats').add(catView, cat)
@@ -355,7 +357,7 @@ function addCat (cat) {
 // ...
 
 getCat(function (err, cat) {
-  if (!err) addCat(res.body)
+  if (!err) addCat(cat)
 })</code></pre>
   </section>
 
@@ -380,18 +382,17 @@ getCat(function (err, cat) {
 // ...
 dom('.add-cat').on('click', function (ev) {
   console.log(ev)
-})
-</code></pre>
+})</code></pre>
   </section>
 
   <section>
-    <h1>Cat Button</h1>
-    <p>Let's put it together, add a cat when we click the button!</p>
+    <h1>More Cats</h1>
+    <p>Let's put it all together, add a cat when we click the button!</p>
     <pre><code class="javascript">// cat-scripts.js
 // ...
 dom('.add-cat').on('click', function (ev) {
   getCat(function (err, cat) {
-    if (!err) addCat(res.body)
+    if (!err) addCat(cat)
   })
 })</code></pre>
     <p>Hey look, a sweet cat app! :3</p>

@@ -102,7 +102,7 @@ server.listen(5000)</code></pre>
 
 var http = require('http') // built-in module
 var catFaces = require('cat-ascii-faces') // npmjs.org module
-var catNames = require('cat-names') // npmjs.org module
+var catNames = require('cat-names').random // npmjs.org module
 
 function handler (req, res) {
   res.end(JSON.stringify({
@@ -141,7 +141,7 @@ module.exports = catImages</code></pre>
 
 var http = require('http') // built-in module
 var catFaces = require('cat-ascii-faces') // npmjs.org module
-var catNames = require('cat-names') // npmjs.org module
+var catNames = require('cat-names').random // npmjs.org module
 var catImages = require('./cat-images') // our shiny module
 
 function handler (req, res) {

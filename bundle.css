@@ -6639,11 +6639,17 @@ button.close {
   opacity: 0.7;
 }
 
-.fork-me {
+.top-right,
+.top-left {
   position: fixed;
   top: 15px;
-  right: 15px;
   z-index: 10;
+}
+.top-right {
+  right: 15px;
+}
+.top-left {
+  left: 15px;
 }
 html,
 body,

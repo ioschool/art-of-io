@@ -50,11 +50,16 @@
 //@import (inline) "../node_modules/highlight.js/styles/xcode.css";
 //@import (inline) "../node_modules/highlight.js/styles/zenburn.css";
 
-.fork-me {
+.top-right, .top-left {
   position: fixed;
   top: @grid-gutter-width / 2;
-  right: @grid-gutter-width / 2;
   z-index: 10;
+}
+.top-right {
+  right: @grid-gutter-width / 2;
+}
+.top-left {
+  left: @grid-gutter-width / 2;
 }
 
 html, body, main {

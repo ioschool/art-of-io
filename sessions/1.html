@@ -21,9 +21,19 @@
 
   </head>
   <body>
-    <a class='fork-me btn btn-default' href='http://github.com/ioschool/art-of-io'>
-      View Source
-    </a>
+    <div class="top-left">
+      <a class="index btn btn-primary" href="http://ioschool.is">
+        ioschool.is
+      </a>
+    </div>
+    <div class="top-right">
+      <a class='fork-me btn btn-default' href='http://github.com/ioschool/art-of-io'>
+        View Source
+      </a>
+      <a class="toggle-notes btn btn-info" href="#">
+        Toggle Notes
+      </a>
+    </div>
 
     <main>
       
@@ -118,7 +128,7 @@ server.listen(5000)</code></pre>
 
 var http = require('http') // built-in module
 var catFaces = require('cat-ascii-faces') // npmjs.org module
-var catNames = require('cat-names') // npmjs.org module
+var catNames = require('cat-names').random // npmjs.org module
 
 function handler (req, res) {
   res.end(JSON.stringify({
@@ -157,7 +167,7 @@ module.exports = catImages</code></pre>
 
 var http = require('http') // built-in module
 var catFaces = require('cat-ascii-faces') // npmjs.org module
-var catNames = require('cat-names') // npmjs.org module
+var catNames = require('cat-names').random // npmjs.org module
 var catImages = require('./cat-images') // our shiny module
 
 function handler (req, res) {

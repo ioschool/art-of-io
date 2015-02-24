@@ -21,9 +21,19 @@
 
   </head>
   <body>
-    <a class='fork-me btn btn-default' href='http://github.com/ioschool/art-of-io'>
-      View Source
-    </a>
+    <div class="top-left">
+      <a class="index btn btn-primary" href="http://ioschool.is">
+        ioschool.is
+      </a>
+    </div>
+    <div class="top-right">
+      <a class='fork-me btn btn-default' href='http://github.com/ioschool/art-of-io'>
+        View Source
+      </a>
+      <a class="toggle-notes btn btn-info" href="#">
+        Toggle Notes
+      </a>
+    </div>
 
     <main>
       {% autoescape false %}

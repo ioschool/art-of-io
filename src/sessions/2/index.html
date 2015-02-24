@@ -14,7 +14,7 @@ scripts:
 <article class="presentation">
 
   <section>
-    <h1>The Art of I/O (3rd Session of 3)</h1>
+    <h1>The Art of I/O (3rd Session of 4)</h1>
     <h2>A magical introduction to input and output signals</h2>
     <img src="../../images/mad_science_wizard.svg" />
     <h3>
@@ -32,7 +32,7 @@ scripts:
 
   <section>
     <h1>Course Recap</h1>
-    <p>In our last two session, we touched on
+    <p>In our last two sessions, we've touched on
       <ul>
         <li>functions (accept input, return output, maybe do effects)</li>
         <li>closures (functions that 'close over' variables)</li>
@@ -43,8 +43,373 @@ scripts:
       </ul>
     </p>
     <p>
+      In this session, we'll dive deep into streams, the heart of I/O magic.
+    </p>
+  </section>
+
+  <section>
+    <h1>Stream Origins</h1>
+    <blockquote>
+      "We should have some ways of connecting programs like garden
+      hose--screw in another segment when it becomes necessary to
+      massage data in another way. This is the way of IO also."
+    </blockquote>
+    <p><a href="http://cm.bell-labs.com/who/dmr/mdmpipe.html">Doug McIlroy. October 11, 1964</a></p>
+  </section>
+  
+  <section>
+    <h1>Stream Magic</h1>
+    <p>
+      Streams allow us to
+      <ul>
+        <li>
+          operate on data chunk by chunk
+        </li>
+        <li>
+          compose around a common abstraction
+        </li>
+      </ul>
+    </p>
+  </section>
+
+  <section>
+    <h1>Chunk By Chunk</h1>
+    <p>
+      With streams, we can operate on data chunk by chunk, without buffering everything into memory.
+    </p>
+    <blockquote>
+      Let's say we want to fill a large pool with buckets of water. We could fill many buckets one time, but then we need heaps upon heaps of buckets for a large pool, <em>or</em> we could fill one bucket many times.
+    </blockquote>
+  </section>
+
+  <section>
+    <h1>Modular Composition</h1>
+    <p>
+      With streams, we can pipe abstractions together:
+    </p>
+    <pre><code class="bash">curl http://www.gutenberg.org/cache/epub/2701/pg2701.txt > mobydick.txt</code></pre>
+    <pre><code class="bash">&lt;mobydick.txt sed -r 's/\s+/\n/g' | grep -i whale | wc -l</code></pre>
+    <pre><code class="javascript">fs.createReadStream('mobydick.txt')
+    .pipe(replace(/\s+/g, '\n'))
+    .pipe(filter(/whale/i))
+    .pipe(linecount(function (count) {
+        console.log(count)
+    }))</code></pre>
+  </section>
+
+  <section>
+    <h1>Streams Overview</h1>
+    <ul>
+      <li>
+        Readable
+        <ul>
+          <li>produces data: you can pipe FROM it</li>
+          <li><code>readable.pipe(A)</code></li>
+        </ul>
+      </li>
+      <li>
+        Writable
+        <ul>
+          <li>consumes data: you can pipe TO it</li>
+          <li><code>A.pipe(writable)</code></li>
+        </ul>
+      </li>
+      <li>
+        Transform
+        <ul>
+          <li>consumes data, producing transformed data</li>
+          <li><code>A.pipe(transform).pipe(B)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h1>Readable fs -> Writable stdout<h1>
+    <pre><code class="javascript">// greetz.js
+    
+var fs = require('fs')
+
+fs.createReadStream('greetz.txt')
+  .pipe(process.stdout)</code></pre>
+    <pre><code class="bash">echo beep boop > greetz.txt
+node greetz.js</code></pre>
+  </section>
+
+  <section>
+    <h1>Readable stdin -> Writable stdout</h1>
+    <p>What if we want to read from stdin instead of a file?</p>
+    <p>Just pipe from `process.stdin` instead of `fs.createReadStream()`.</p>
+    <pre><code class="javascript">// stdin.js
+
+process.stdin
+  .pipe(process.stdout)</code></pre>
+    <pre><code class="bash">echo "beep boop" | node stdin.js</code></pre>
+  </section>
+
+  <section>
+    <h1>Transform through</h1>
+    <p>Now let's transform the data before we print it out!</p>
+    <p>You can chain `.pipe()` calls together just like the <code>|</code> operator in bash:</p>
+    <pre><code class="javascript">// stdin-through.js
+
+process.stdin
+  .pipe(...)
+  .pipe(process.stdout)</code></pre>
+  </section>
+
+  <section>
+    <h1>through2</h1>
+    <p>
+      through2 is a module that provides a simple way to setup a transform stream.
+    </p>
+    <p>
+      <code>npm install through2</code>
+    </p>
+  </section>
+
+  <section>
+    <h1>through(write, end)</h1>
+    <p>
+      With through there are 2 parameters: <code>write</code> and <code>end</code>. Both are optional.
+    </p>
+    <ul>
+      <li><code>function write (buf, enc, next) {}</code></p>
+      <li><code>function end () {}</code></p>
+    </ul>
+    <p>
+      Call <code>next()</code> when you're ready for the next chunk. If you don't call <code>next()</code>, your stream will hang!
+    </p>
+    <p>Call <code>this.push(VALUE)</code> inside the callback to put VALUE into the stream's output.</p>
+    <p>Use a <code>VALUE</code> of <code>null</code> to end the stream.</p>
+  </section>
+
+  <section>
+    <h1>Transform through</h1>
+    <p><code>npm install through2</code></p>
+    <pre><code class="javascript">// stdin-through.js
+    
+var through = require('through2')
+
+process.stdin
+  .pipe(through(toUpper))
+  .pipe(process.stdout)
+
+function toUpper (buf, enc, next) {
+  var up = buf.toString().toUpperCase()
+  this.push(up)
+  next()
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Writable Streams</h1>
+    <p>
+      We've seen `.pipe()` which is a method of all readable streams.
+    </p>
+    <p>
+      Any stream you can write to has these methods:
+      <ul>
+        <li><code>.write(buf)</code> - write some data</li>
+        <li><code>.end()</code> - close the stream</li>
+        <li><code>.end(buf)</code> - write some data and close the stream</li>
+      </ul>
+    </p>
+  </section>
+
+  <section>
+    <h1>HTTP Streams</h1>
+    <p>
+      <code>req</code> is a readable stream, <code>res</code> is a writable stream.
+    </p>
+    <pre><code class="javascript">var http = require('http')
+
+function handler (req, res) {
+  req.pipe(process.stdout)
+
+  res.write("hello ")
+  res.write("world!")
+  res.end()
+}
+
+http.createServer(handler).listen(5000)</code></pre>
+  </section>
+
+  <section>
+    <h1>Object streams</h1>
+    <p>Normally you can only read and write buffers and strings with streams. However, if you initialize a stream in `objectMode`, you can use any kind of object (except for `null`):</p>
+    <pre><code class="javascript">// obj-stream.js
+    
+var through = require('through2')
+
+var tr = through.obj(function (obj, enc, next) {
+    this.push((obj.n * 1000) + '\n')
+    next()
+})
+tr.pipe(process.stdout)
+
+tr.write({ n: 5 })
+tr.write({ n: 10 })
+tr.write({ n: 3 })
+tr.end();</code></pre>
+  </section>
+
+  <section>
+    <h1>Streams In The Wild</h1>
+    <p>Fun fact: the entire <a href="https://npmjs.org">npm registry</a> is available as JSON!</p>
+    <p>Let's use <code>curl</code> to grab this:</p>
+    <pre><code class="bash">curl http://isaacs.iriscouch.com/registry/_all_docs?include_docs=true &gt; npm.json</code></pre>
+    <p>Then count <a href="http://dominictarr.com">Dominic Tarr</a>'s modules:</p>
+    <pre><code class="bash">cat npm.json | grep 'Dominic Tarr' | wc -l</code></pre>
+  </section>
+
+  <section>
+    <h1>Reading JSON Without Streams</h1>
+    <pre><code class="javascript">// npm-nostream.js
+
+var fs = require('fs')
+
+fs.readFile("npm.json", function (err, contents) {
+  var registry = JSON.parse(contents)
+  var pkgs = registry.rows.map(function (row) { return row.doc })
+  var names = pkgs.map(function (pkg) { return pkg.name })
+  names.forEach(console.log)
+})</code></pre>
+  </section>
+
+  <section>
+    <h1>Reading JSON With Streams</h1>
+    <p><code>npm install json-stream</code></p>
+    <pre><code class="javascript">// npm.js
+
+var fs = require('fs')
+var JSONStream = require('JSONStream')
+var through = require('through2')
+
+fs.createReadStream('npm.json')
+  .pipe(JSONStream.parse(['rows', true, 'doc']))
+  .pipe(getNames())
+  .pipe(process.stdout)
+
+function getNames () {
+  return through.obj(function (pkg, enc, next) {
+    if (pkg.name)
+      this.push(pkg.name + "\n")
+    next()
+  })
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Basic Stream Processing</h1>
+    <pre><code class="javascript">// npm.js
+
+var fs = require('fs')
+var JSONStream = require('JSONStream')
+var through = require('through2')
+
+fs.createReadStream('npm.json')
+  .pipe(JSONStream.parse(['rows', true, 'doc']))
+  .pipe(filterByAuthor("Dominic Tarr"))
+  .pipe(getNames())
+  .pipe(process.stdout)
+
+function filterByAuthor (authorName) {
+  return through.obj(function (pkg, enc, next) {
+    if (!pkg || !pkg.author) return next()
+    if (pkg.author.name === authorName) {
+      this.push(pkg)
+    }
+    next()
+  })
+}
+
+// function getNames ... </code></pre>
+  </section>
+
+  <section>
+    <h1>Stream Resources</h1>
+    <ul>
+      <li>
+        substack's stream workshop 
+        <a href="https://github.com/cyberwizardinstitute/workshops/blob/master/streams.markdown">notes</a> and <a href="https://www.youtube.com/watch?v=k2jqXilcpKs">video</a>
+      </li>
+      <li>
+        substack's <a href="https://github.com/substack/stream-handbook">stream handbook</a>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h1>On The Magic Journey</h1>
+    <h2><a href="http://nodeschool.io">NodeSchool</a></h2>
+    <ul>
+      <li><a href="http://nodeschool.io#javascripting">javascripting</a>: Javascript workshop</li>
+      <li><a href="http://nodeschool.io#learnyounode">learnyounode</a>: Async I/O workshop</li>
+      <li><a href="http://nodeschool.io#async-you">async-you</a>: Advanced async workshop</li>
+      <li><a href="http://nodeschool.io#browserify-adventure">browserify-adventure</a>: Browserify workshop</li>
+      <li><a href="http://nodeschool.io#stream-adventure">stream-adventure</a>: Stream workshop</li>
+    </ul>
+    <img src="../../images/follow_your_dreams.png" height="200" width="388" />
+  </section>
+
+</article>
+
+<div class="notes-only">
+  <!--
+  # stream types
+
+  There are many kinds of streams. We've seen two types
+  already: transform (through2) and writable (concat-stream).
+
+  * readable - produces data: you can pipe FROM it
+  * writable - consumes data: you can pipe TO it
+  * transform - consumes data, producing transformed data
+  * duplex - consumes data separately from producing data
+
+  # stream types in code
+
+  * readable: `readable.pipe(A)`
+  * writable: `A.pipe(writable)`
+  * transform: `A.pipe(transform).pipe(B)`
+  * duplex: `A.pipe(duplex).pipe(A)`
+
+  # through()
+
+  If you don't give through any arguments, these are the
+  default values for write and end:
+
+  * `function write (buf, enc, next) { this.push(buf); next() }`
+  * `function end () { this.push(null) }`
+
+  This means that `through()` with no arguments will pass
+  everything written as input directly through to its output.
+
+  # duplex streams
+
+  You can write to and read from a duplex stream, but the
+  input doesn't directly drive the output.
+
+  Duplex streams are like having a conversation on a telephone
+  where both parties can talk and listen whenever they want.
+
+  If you can do:
+
+      a.pipe(duplex).pipe(a)
+
+    then you have a duplex stream.
+  -->
+
+  <section>
+    <p>
       In this session, we'll complete our magical introduction to these spells by crafting a real-time multiplayer game.
     </p>
+  </section>
+
+  <section>
+    <h1>Stream App!</h1>
+    <h2>＼(=^‥^)/’``</h2>
+    <p>Okay okay okay, enough chit chat, time to make an app.</p>
   </section>
 
   <section>
@@ -53,17 +418,11 @@ scripts:
     <pre><code class="javascript">// server.js
 
 var http = require('http')
-var browserify = require('browserify')
 var ecstatic = require('ecstatic')
 
-function httpHandler (req, res) {
-    ecstatic(req, res)
-  }
-}
+var httpServer = http.createServer(ecstatic)
 
-var httpServer = http.createServer(httpHandler)
-
-server.listen(5000)</code></pre>
+httpServer.listen(5000)</code></pre>
   </section>
 
   <section>
@@ -115,7 +474,9 @@ console.log("welcome to space.");</code></pre>
     <h1>Add Some Browserify</h1>
     <p><code>npm install browserify</code></p>
     <pre><code class="javascript">// server.js
-// ...
+
+var http = require('http')
+var ecstatic = require('ecstatic')
 var browserify = require('browserify')
 
 function httpHandler (req, res) {
@@ -125,64 +486,11 @@ function httpHandler (req, res) {
     ecstatic(req, res)
   }
 }
-// ...</code></pre>
-  </section>
 
-  <section>
-    <h1>Stream Origins</h1>
-    <blockquote>
-      "We should have some ways of connecting programs like garden
-      hose--screw in another segment when it becomes necessary to
-      massage data in another way. This is the way of IO also."
-    </blockquote>
-    <p><a href="http://cm.bell-labs.com/who/dmr/mdmpipe.html">Doug McIlroy. October 11, 1964</a></p>
-  </section>
-  
-  <section>
-    <h1>Stream Magic</h1>
-    <p>
-      Streams allow us to
-      <ul>
-        <li>
-          operate on data chunk by chunk
-        </li>
-        <li>
-          build around a common abstraction
-        </li>
-      </ul>
-    </p>
-  </section>
+var httpServer = http.createServer(httpHandler)
 
-  <section>
-    <h1>How To Streams</h1>
-    <ul>
-      <li>
-        Readable
-        <ul>
-          <li>produces data: you can pipe FROM it</li>
-          <li><code>readable.pipe(A)</code></li>
-        </ul>
-      </li>
-      <li>
-        Writable
-        <ul>
-          <li>consumes data: you can pipe TO it</li>
-          <li><code>A.pipe(writable)</code></li>
-        </ul>
-      </li>
-      <li>
-        Transform
-        <ul>
-          <li>consumes data, producing transformed data</li>
-          <li><code>A.pipe(transform).pipe(B)</code></li>
-        </ul>
-      </li>
-    </ul>
+httpServer.listen(5000)</code></pre>
   </section>
-
-  <!--
-  show streams by parsing with jsonstream instead of JSON.parse
-  -->
 
   <section>
     <!-- send state on server-->
@@ -276,9 +584,6 @@ stream.pipe(through(function (state) {
 
   -->
 
-</article>
-
-<div class="notes-only">
 
   <section>
     <h1>Duplex Stream Magic</h1>
@@ -304,6 +609,7 @@ stream.pipe(through(function (state) {
 
 
 <!--
+
 
 # art of the stack
 

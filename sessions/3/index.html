@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:title" content="The Art of I/O" />
+    <meta property="og:site_name" content="ioschool.is" />
+    <meta property="og:url" content="http://ioschool.is/art-of-io/sessions/3" />
+    <meta property="og:description" content="A magical introduction to input and output signals." />
+    <meta property="og:image" content="http://ioschool.is/art-of-io/sessions/3/../../images/cyberwizard_mad_science.svg" />
+    <meta property="og:type" content="article" />
+    <meta property="fb:profile_id" content="" />
+    <meta property="article:publisher" content="" />
+
+    <title>The Art of I/O</title>
+
+    
+    <link rel="stylesheet" type="text/css" href="../../bundle.css" />
+    
+
+  </head>
+  <body>
+    <a class='fork-me btn btn-default' href='http://github.com/ioschool/art-of-io'>
+      View Source
+    </a>
+
+    <main>
+      
+      <article class="presentation">
+
+  <section>
+    <h1>The Art of I/O (4th Session of 4)</h1>
+    <h2>A magical introduction to input and output signals</h2>
+    <img src="../../images/mad_science_wizard.svg" />
+    <h3>
+      <a href="../0" data-query=".">First Session</a>
+      |
+      <a href="../2" data-query=".">Previous Session</a>
+      |
+      <a href="../../" data-query=".">Course Home</a>
+      |
+      <a href="../3" data-query="{ notes: !notes }">Toggle Notes Mode</a>
+      |
+      <a href="http://ioschool.is">http://ioschool.is</a>
+    </h3>
+  </section>
+
+  <section>
+    <h1>Course Recap</h1>
+    <p>In our last three sessions, we've touched on
+      <ul>
+        <li>functions (accept input, return output, maybe do effects)</li>
+        <li>closures (functions that 'close over' variables)</li>
+        <li>callbacks (functions that are 'called back' later)</li>
+        <li>modules (exported code we can require in other code)</li>
+        <li>events (when things happen)</li>
+        <li>streams (chunks of data over time)</li>
+      </ul>
+    </p>
+    <p>
+      In this session, we'll complete our magical introduction to these spells by crafting a real-time multiplayer game.
+      ＼(=^‥^)/’``
+    </p>
+  </section>
+
+  <section>
+    <h1>Basic Server</h1>
+    <p><code>npm install ecstatic</code></p>
+    <pre><code class="javascript">// server.js
+
+var http = require('http')
+var ecstatic = require('ecstatic')
+
+var httpServer = http.createServer(ecstatic)
+
+httpServer.listen(5000)</code></pre>
+  </section>
+
+  <section>
+    <h1>Basic HTML</h1>
+    <pre><code class="html">&lt;!-- index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;Space Cat!&lt;/title&gt;
+    &lt;link href=&quot;./styles.css&quot; rel=&quot;stylesheet&quot; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;svg class=&quot;space&quot; height=&quot;100%&quot; width=&quot;100%&quot;&gt;
+      &lt;image class=&quot;cat&quot; xlink:href=&quot;./cat.svg&quot;
+        height=&quot;50px&quot; width=&quot;50px&quot; x=&quot;50%&quot; y=&quot;50%&quot; /&gt;
+    &lt;/svg&gt;
+    &lt;script src=&quot;./client.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<!-- index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Space Cat!</title>
+    <link href="./styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <svg class="space" height="100%" width="100%">
+      <image class="cat" xlink:href="./cat.svg"
+        height="50px" width="50px" x="50%" y="50%" />
+    </svg>
+    <script src="./client.js"></script>
+  </body>
+</html>
+-->
+  </section>
+
+  <section>
+    <h1>Basic Assets</h1>
+    <pre><code class="bash"># twemoji cat emoji
+curl https://upload.wikimedia.org/wikipedia/commons/a/a8/Twemoji_1f63a.svg &gt; cat.svg</code></pre>
+    <pre><code class="css">/* styles.css */
+html, body, svg {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}</code></pre>
+    <pre><code class="javascript">// client.js
+console.log("welcome to space.");</code></pre>
+  </section>
+
+  <section>
+    <h1>Add Some Browserify</h1>
+    <p><code>npm install browserify</code></p>
+    <pre><code class="javascript">// server.js
+
+var http = require('http')
+var ecstatic = require('ecstatic')
+var browserify = require('browserify')
+
+function httpHandler (req, res) {
+  if (req.url === "/client.js") {
+    browserify("./client.js").bundle().pipe(res)
+  } else {
+    ecstatic(req, res)
+  }
+}
+
+var httpServer = http.createServer(httpHandler)
+
+httpServer.listen(5000)</code></pre>
+  </section>
+
+  <section>
+    <!-- connect server to client -->
+    <h1>Connect Server And Client Over Streams</h1>
+    <pre><code class="javascript">// server.js
+// ...
+var websocket = require('websocket-stream')
+
+function wsHandler (stream) {
+  console.log("new connection!")
+}
+
+websocket.createServer({
+  server: httpServer,
+}, wsHandler)</code></pre>
+    <pre><code class="javascript">// client.js
+
+var websocket = require('websocket-stream')
+
+var stream = websocket("ws://" + location.host + "/")</code></pre>
+  </section>
+
+  <section>
+    <!-- send state on server-->
+    <h1>Server - Broadcast State</h1>
+    <pre><code class="javascript">// server.js
+// ...
+
+var position = [50, 50]
+
+function wsHandler (stream) {
+  // send initial position to client
+  stream.write(JSON.stringify(position))
+}
+
+// ...</code></pre>
+  </section>
+
+  <section>
+    <!-- receive state in client -->
+    <h1>Client - Listen For State</h1>
+
+    <pre><code class="javascript">// client.js
+// ...
+
+var through = require('through2')
+
+stream.pipe(through(function (state) {
+  // get current position from server
+  var position = JSON.parse(state)
+  console.log(position)
+}))</code></pre>
+  </section>
+
+  <section>
+    <!-- render state in browser -->
+    <h1>Client - Render State</h1>
+
+    <pre><code class="javascript">// client.js
+
+// ...
+var dom = require('domquery')
+
+var cat = dom('.cat')[0]
+
+// ...
+stream.pipe(through(function (state, enc, next) {
+  // ...
+
+  // set cat x and y coordinates based on position
+  cat.setAttribute('x', position[0] + "%")
+  cat.setAttribute('y', (100 - position[1]) + "%")
+  next()
+}))</code></pre>
+  </section>
+
+  <section>
+    <h1>Event Magic</h1>
+    <p>
+      Events allow us to do something when something else happens.
+    </p>
+    <p>
+      We can listen to event emitters (objects that "emit events") with <code>emitter.on(eventName, callback)</code>.
+    </p>
+  </section>
+
+  <section>
+    <h1>Client - Capture Events</h1>
+
+    <!-- capture events in browser -->
+    <pre><code class="javascript">// client.js
+
+// ...
+
+var codeToKey = require('keycode')
+
+dom(document).on('keydown', function (ev) {
+  // get key name from keydown event
+  var key = codeToKey(ev)
+  console.log("key", key)
+})</code></pre>
+  </section>
+
+  <section>
+    <h1>Client - Send Actions</h1>
+    <!-- send updates in client -->
+    <pre><code class="javascript">// client.js
+
+// ...
+
+dom(document).on('keydown', function (ev) {
+  var key = codeToKey(ev)
+
+  // send key name to server
+  stream.write(key)
+})</code></pre>
+  </section>
+
+
+  <section>
+    <h1>Server - Receive Actions</h1>
+    <!-- receive updates on server -->
+    <pre><code class="javascript">// server.js
+
+// ...
+
+function wsHandler (stream) {
+  // ...
+
+  // pipe data from client to stdout
+  stream.pipe(process.stdout)
+}
+
+// ...</code></pre>
+  </section>
+
+  <section>
+    <h1>Server - Handle Actions</h1>
+    <!-- update state on server -->
+    <pre><code class="javascript">// server.js ----------------------------------------
+// ...
+
+function wsHandler (stream) {
+
+  // change position based on incoming keys
+  stream.pipe(handleActions())
+}
+
+function handleActions () {
+  return through(function (buf, enc, next) {
+    // get incoming key
+    var key = buf.toString()
+    console.log("key", key)
+
+    // get current position
+    var pos = position;
+    console.log("position", pos)
+
+    next()
+  })
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Server - Update State</h1>
+    <!-- update state on server -->
+    <pre><code class="javascript">// server.js ----------------------------------------
+// ...
+var mod = require('mod-op')
+// ...
+    // ...
+    // update position based on key
+    switch (key) {
+      case "right":
+        pos[0] = mod((pos[0] + 1), 100)
+        break
+      case "left":
+        pos[0] = mod((pos[0] - 1), 100)
+        break
+      case "up":
+        pos[1] = mod((pos[1] + 1), 100)
+        break
+      case "down":
+        pos[1] = mod((pos[1] - 1), 100)
+        break
+      default:
+        return next()
+    }
+    // ...</code></pre>
+  </section>
+
+  <section>
+    <h1>Server - Send State Updates</h1>
+    <pre><code class="javascript">// server.js ----------------------------------------
+// ...
+
+function wsHandler (stream) {
+  // ...
+  // change position based on incoming keys
+  stream.pipe(handleActions(stream))
+  // ...
+}
+
+function handleActions (stream) {
+  return through(function (buf, enc, next) {
+    // ...
+
+    // write new position
+    stream.write(pos)
+
+    next()
+  })
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Server - Observable State</h1>
+    <!-- receive updates on server -->
+    <pre><code class="javascript">// server.js ----------------------------------------
+
+// ...
+
+var Observ = require('observ')
+var ObservStream = require('observ-stream')
+
+var initialPosition = [50, 50]
+var positionObserv = Observ(initialPosition)
+var positionStream = ObservStream(
+  positionObserv, { objectMode: false }
+)
+
+function wsHandler (stream) {
+
+  // write current position
+  var position = positionObserv()
+  stream.write(JSON.stringify(position))
+
+  // pipe position state to client
+  positionStream.pipe(stream)
+
+  stream.pipe(handleActions(positionObserv))
+}
+
+function handleActions (positionObserv) {
+  return through(function (buf, enc, next) {
+    // ...
+
+    // get current position
+    var pos = positionObserv()
+
+    // ...
+
+    // set new position
+    positionObserv.set(pos)
+
+    next()
+  })
+}</code></pre>
+  </section>
+
+  <section>
+    <h1>Make It Magical</h1>
+    <pre><code class="css">/* styles.css */
+
+/* ... */
+
+/* below derived from http://codepen.io/simurai/pen/kgsce */
+.space {
+  background-position: center;
+  background-size: 120px 120px;
+  background-color: hsla(320,80%,60%,1);
+  background-image: repeating-radial-gradient( hsla(320,100%,60%,.6) 0px, hsla(220,100%,60%,0) 60%),
+    repeating-radial-gradient( hsla(330,100%,40%,1) 12%, hsla(320,80%,60%,1) 48px);
+  animation: space 10s cubic-bezier(.1,.4,.9,.6) infinite;
+}
+
+@keyframes space {
+  from { background-size:  120px  120px,  48px  48px; }
+  50%  { background-size: 240px 240px, 200px 200px; }
+  to   { background-size:  48px  48px, 280px 280px; }
+}</code></pre>
+  </section>
+
+  <!--
+
+  http
+  browserify
+  dataplex over shoe
+  partyquest game
+  - server holds state of game (position of person from 0.0 to 1.0 in x and y)
+  - users send changes (keydown event)
+  - server updates and sends to users
+  streams
+  - key events -> changes -> server update -> broadcast
+  routes
+  - get current state
+  - send state changes
+
+  -->
+
+  <section>
+    <h1>Life Of Magic</h1>
+    <h2><a href="http://nodeschool.io">NodeSchool</a></h2>
+    <ul>
+      <li><a href="http://nodeschool.io#javascripting">javascripting</a>: Javascript workshop</li>
+      <li><a href="http://nodeschool.io#learnyounode">learnyounode</a>: Async I/O workshop</li>
+      <li><a href="http://nodeschool.io#async-you">async-you</a>: Advanced async workshop</li>
+      <li><a href="http://nodeschool.io#browserify-adventure">browserify-adventure</a>: Browserify workshop</li>
+      <li><a href="http://nodeschool.io#stream-adventure">stream-adventure</a>: Stream workshop</li>
+    </ul>
+    <img src="../../images/follow_your_dreams.png" height="200" width="388" />
+  </section>
+  
+</article>
+
+<div class="notes-only">
+
+</div>
+<!--
+
+
+# art of the stack
+
+## db
+
+level
+
+get registry on level with
+  - level-couch-sync
+  - GET http://isaacs.iriscouch.com/registry/_all_docs?include_docs=true
+
+use level to teach big O complexity
+  - naive scan of all data
+  - generate more data (indexes) to reduce amount to scan
+
+## api
+
+feathers
+
+## ui
+
+react
+
+-->
+
+      
+    </main>
+
+    
+    <script type="text/javascript" src="../../bundle.js"></script>
+    
+
+    <!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//analytics.dinosaur.is/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 5]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//analytics.dinosaur.is/piwik.php?idsite=5" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
+  </body>
+</html>

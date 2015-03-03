@@ -198,10 +198,12 @@ function wsHandler (stream) {
 
 var through = require('through2')
 
-stream.pipe(through(function (state) {
+stream.pipe(through(function (state, enc, next) {
   // get current position from server
   var position = JSON.parse(state)
   console.log(position)
+
+  next()
 }))</code></pre>
   </section>
 
@@ -223,6 +225,7 @@ stream.pipe(through(function (state, enc, next) {
   // set cat x and y coordinates based on position
   cat.setAttribute('x', position[0] + "%")
   cat.setAttribute('y', (100 - position[1]) + "%")
+
   next()
 }))</code></pre>
   </section>

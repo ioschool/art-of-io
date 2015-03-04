@@ -241,6 +241,7 @@ http.createServer(handler).listen(5000)</code></pre>
 
   <section>
     <h1>Object streams</h1>
+    <!-- TODO use array to stream to remove tr = ... and tr.write -->
     <p>Normally you can only read and write buffers and strings with streams. However, if you initialize a stream in `objectMode`, you can use any kind of object (except for `null`):</p>
     <pre><code class="javascript">// obj-stream.js
     
